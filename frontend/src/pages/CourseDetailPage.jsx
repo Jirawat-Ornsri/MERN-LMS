@@ -1,0 +1,173 @@
+import { useParams, Link } from "react-router-dom"
+import { Star, Users, ArrowLeft, BookOpen, Clock, Calendar } from "lucide-react"
+import mockCourses from "../data/course"
+
+const CourseDetailPage = () => {
+  const { id } = useParams()
+  const course = mockCourses.find((c) => c.id.toString() === id)
+
+  if (!course) {
+    return (
+      <div className="flex flex-col items-center justify-center h-screen">
+        <h2 className="text-2xl font-bold text-gray-800">Course not found</h2>
+        <Link to="/" className="mt-4 flex items-center text-blue-600 hover:text-blue-800 transition-colors">
+          <ArrowLeft className="mr-2 h-4 w-4" />
+          Back to Courses
+        </Link>
+      </div>
+    )
+  }
+
+  // Format price with Thai Baht
+  const formattedPrice = new Intl.NumberFormat("th-TH", {
+    style: "currency",
+    currency: "THB",
+    minimumFractionDigits: 0,
+  }).format(course.price)
+
+  return (
+    <div className="min-h-screen">
+      {/* Hero Section */}
+      <div className="relative h-80 md:h-96 w-full">
+        <div className="absolute inset-0 bg-black/50 z-10"></div>
+        <img src={course.image || "/placeholder.svg"} alt={course.title} className="w-full h-full object-cover" />
+        <div className="absolute inset-0 z-20 flex flex-col justify-end p-6 md:p-10">
+          <div className="w-fit px-3 py-1 bg-blue-600 text-white text-sm font-medium rounded-full mb-3">
+            {course.subject}
+          </div>
+          <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">{course.title}</h1>
+          <div className="flex items-center text-white">
+            <div className="flex items-center mr-4">
+              <Star className="h-4 w-4 text-yellow-400 mr-1 fill-yellow-400" />
+              <span>{course.rating}</span>
+            </div>
+            <div className="flex items-center">
+              <Users className="h-4 w-4 mr-1" />
+              <span>{course.students.toLocaleString()} students</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="max-w-7xl mx-auto px-4 py-8 md:py-12">
+        <Link to="/courses" className="inline-flex items-center mb-8">
+          <ArrowLeft className="mr-2 h-4 w-4" />
+          กลับไปยังหน้าคอร์สทั้งหมด
+        </Link>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {/* Course Details */}
+          <div className="md:col-span-2 space-y-8">
+            {/* Description */}
+            <div className=" rounded-lg shadow-sm p-6">
+              <h2 className="text-xl font-bold mb-4">รายละเอียดคอร์ส</h2>
+              <p className="leading-relaxed">{course.description}</p>
+
+              <div className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div className="flex items-start">
+                  <BookOpen className="h-5 w-5  mr-2 mt-0.5" />
+                  <div>
+                    <h3 className="font-medium ">เนื้อหาครบถ้วน</h3>
+                    <p className="text-sm ">10 บทเรียน</p>
+                  </div>
+                </div>
+                <div className="flex items-start">
+                  <Clock className="h-5 w-5  mr-2 mt-0.5" />
+                  <div>
+                    <h3 className="font-medium ">ระยะเวลา</h3>
+                    <p className="text-sm ">20 ชั่วโมง</p>
+                  </div>
+                </div>
+                <div className="flex items-start">
+                  <Calendar className="h-5 w-5  mr-2 mt-0.5" />
+                  <div>
+                    <h3 className="font-medium">อัพเดทล่าสุด</h3>
+                    <p className="text-sm ">มกราคม 2024</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Instructor */}
+            <div className="b rounded-lg shadow-sm p-6">
+              <h2 className="text-xl font-bold mb-4">ผู้สอน</h2>
+              <div className="flex items-center">
+                <div className="h-16 w-16 rounded-full  flex items-center justify-center  text-xl font-bold mr-4">
+                  {course.instructor.charAt(0)}
+                </div>
+                <div>
+                  <h3 className="font-medium text-lg">{course.instructor}</h3>
+                  <p className=" text-sm">ผู้เชี่ยวชาญด้าน {course.subject}</p>
+                </div>
+              </div>
+            </div>
+
+            {/* What You'll Learn */}
+            <div className="rounded-lg shadow-sm p-6">
+              <h2 className="text-xl font-bold mb-4">สิ่งที่คุณจะได้เรียนรู้</h2>
+              <ul className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                {[1, 2, 3, 4, 5, 6].map((item) => (
+                  <li key={item} className="flex items-start">
+                    <svg
+                      className="h-5 w-5 text-green-500 mr-2 mt-0.5"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                    <span className="">เรียนรู้ทักษะสำคัญในด้าน {course.subject}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+
+          {/* Sidebar */}
+          <div className="md:col-span-1">
+            <div className=" rounded-lg shadow-sm p-6 sticky top-8">
+              <div className="text-3xl font-bold mb-4">{formattedPrice}</div>
+
+              <button className="btn btn-primary w-full font-medium py-3 px-4 rounded-lg transition-colors mb-4">
+                ลงทะเบียนเรียน
+              </button>
+
+              <button className="btn btn-ghost w-full  font-medium py-3 px-4 rounded-lg transition-colors mb-6">
+                ทดลองเรียนฟรี
+              </button>
+
+              <div className="space-y-4">
+                <div className="flex justify-between items-center pb-2 border-b ">
+                  <span className="">คะแนน</span>
+                  <div className="flex items-center">
+                    <Star className="h-4 w-4 text-yellow-400 fill-yellow-400 mr-1" />
+                    <span className="font-medium">{course.rating}/5.0</span>
+                  </div>
+                </div>
+
+                <div className="flex justify-between items-center pb-2 border-b ">
+                  <span className="">นักเรียน</span>
+                  <span className="font-medium">{course.students.toLocaleString()}</span>
+                </div>
+
+                <div className="flex justify-between items-center pb-2 border-b">
+                  <span className="">ภาษา</span>
+                  <span className="font-medium">ไทย</span>
+                </div>
+
+                <div className="flex justify-between items-center">
+                  <span className="">การเข้าถึง</span>
+                  <span className="font-medium">ตลอดชีพ</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export default CourseDetailPage
+

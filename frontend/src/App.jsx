@@ -12,6 +12,10 @@ import { useEffect } from "react";
 
 import { Loader } from "lucide-react";
 import { Toaster } from "react-hot-toast";
+import Footer from "./components/Footer";
+import CoursesPage from "./pages/CoursesPage";
+import CourseDetailPage from "./pages/CourseDetailPage";
+import ScrollToTop from "./components/ScollingToTop";
 
 
 const App = () => {
@@ -31,15 +35,20 @@ const App = () => {
 
   return (
     <div data-theme={theme}>
+      <ScrollToTop/>
       <Navbar />
 
       <Routes>
         <Route path="/" element={authUser ? <HomePage /> : <Navigate to="/login" />} />
+        <Route path="/courses" element={authUser ? <CoursesPage /> : <Navigate to="/login" />} />
+        <Route path="/course/:id" element={authUser ? <CourseDetailPage /> : <Navigate to="/login" />} />
         <Route path="/signup" element={!authUser ? <SignUpPage /> : <Navigate to="/" />} />
         <Route path="/login" element={!authUser ? <LoginPage /> : <Navigate to="/" />} />
         <Route path="/settings" element={<SettingsPage />} />
         {/* <Route path="/profile" element={authUser ? <ProfilePage /> : <Navigate to="/login" />} /> */}
       </Routes>
+
+      <Footer/>
 
       <Toaster />
     </div>

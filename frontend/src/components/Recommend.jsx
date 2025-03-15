@@ -1,14 +1,14 @@
-import React, { useState } from "react";
+import React from "react";
 import mockCourse from "../data/course";
 import Header from "./Header";
 import { Link } from "react-router-dom";
 
-const CourseList = () => {
+const Recommend = () => {
   const displayedCourses = mockCourse.slice(0, 4);
 
   return (
     <div className="mx-10 my-10">
-      <Header text1={"COURSES"} />
+      <Header text1={"RECOMMENDED COURSES"} />
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {displayedCourses.map((course) => (
           <div key={course.id} className="card bg-base-100 w-full shadow-xl">
@@ -27,13 +27,8 @@ const CourseList = () => {
           </div>
         ))}
       </div>
-      <div className="text-center mt-4">
-        <Link to={"/courses"}>
-          <p className="font-normal text-sm">Show all courses ➜</p>
-        </Link>
-      </div>
     </div>
   );
 };
 
-export default CourseList;
+export default Recommend;

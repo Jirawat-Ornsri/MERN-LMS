@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 
+
 const Corasual = () => {
   const images = [
-    "/docs/images/carousel/carousel-1.svg",
-    "/docs/images/carousel/carousel-2.svg",
-    "/docs/images/carousel/carousel-3.svg",
-    "/docs/images/carousel/carousel-4.svg",
-    "/docs/images/carousel/carousel-5.svg",
+    "devop.jpg",
+    "ml.jpg",
+    "php.jpg",
+    "uxui.jpg",
   ];
 
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -22,7 +22,7 @@ const Corasual = () => {
   return (
     <div id="default-carousel" className="relative w-full" data-carousel="slide">
       {/* Carousel wrapper */}
-      <div className="relative h-56 overflow-hidden rounded-lg md:h-96">
+      <div className="relative w-full h-56 md:h-80 lg:h-96 overflow-hidden rounded-lg">
         {images.map((image, index) => (
           <div
             key={index}
@@ -31,9 +31,9 @@ const Corasual = () => {
             }`}
           >
             <img
-              src={image}
+              src={image} // รูปภาพที่มาจาก public folder
               alt={`Slide ${index + 1}`}
-              className="absolute block w-full -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2"
+              className="absolute block w-full h-full object-cover -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2"
             />
           </div>
         ))}
