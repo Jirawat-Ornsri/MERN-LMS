@@ -1,8 +1,11 @@
 import React from 'react'
+import CourseList from '../components/CourseList'
 
 const HomePage = () => {
   return (
-    <div>HomePage</div>
+    <div className="h-screen">
+      <CourseList/>
+    </div>
   )
 }
 
