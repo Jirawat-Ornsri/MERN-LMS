@@ -8,15 +8,15 @@ import { connectDB } from './lib/db.js';
 
 
 dotenv.config()
-const PORT = process.env.PORT || 5002;
 
 const app = express();
+const PORT = process.env.PORT || 5001;
 
 app.use(express.json()); 
 app.use(cookieParser());
 app.use(
     cors({
-      origin: "http://localhost:5173",
+      origin: "http://localhost:5174",
       credentials: true,
     })
   );
