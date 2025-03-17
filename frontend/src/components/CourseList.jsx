@@ -7,7 +7,7 @@ const CourseList = () => {
   const displayedCourses = mockCourse.slice(0, 4);
 
   return (
-    <div className="mx-10 my-10">
+    <div className="my-10">
       <Header text1={"COURSES"} />
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {displayedCourses.map((course) => (
@@ -27,7 +27,7 @@ const CourseList = () => {
           </div>
         ))}
       </div>
-      <div className="text-center mt-4">
+      <div className="text-center mt-7">
         <Link to={"/courses"}>
           <p className="font-normal text-sm">Show all courses ➜</p>
         </Link>

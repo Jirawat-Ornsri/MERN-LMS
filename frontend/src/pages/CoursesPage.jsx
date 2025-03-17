@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Menu } from "lucide-react";
+import { Filter } from "lucide-react";
 import mockCourses from "../data/course";
 import { Link } from "react-router-dom";
 
@@ -38,10 +38,10 @@ const CoursesPage = () => {
       {/* Sidebar (Responsive) */}
       <div className="md:w-1/4 lg:w-1/5 md:pr-5">
         <button
-          className="md:hidden flex items-center gap-2 text-primary font-bold mb-4"
+          className="mt-5 md:hidden flex items-center gap-2 text-primary font-bold mb-4"
           onClick={() => setIsSidebarOpen(!isSidebarOpen)}
         >
-          <Menu className="w-5 h-5" /> Filter
+          FILTER <Filter className="w-5 h-5" />
         </button>
 
         <div
@@ -81,7 +81,7 @@ const CoursesPage = () => {
               placeholder="Search courses..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="border rounded-lg px-4 py-2 w-full md:w-64"
+              className="border rounded-lg px-4 py-2 w-full md:w-64 sm:w-48"
             />
           </div>
         </div>

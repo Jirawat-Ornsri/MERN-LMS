@@ -145,8 +145,8 @@ const SignUpPage = () => {
       {/* right side */}
 
       <AuthImagePattern
-        title="Join our community"
-        subtitle="Connect with friends, share moments, and stay in touch with your loved ones."
+        title="Join our Learnly"
+        subtitle="Register to learn to upgrade your desired skills."
       />
     </div>
   );

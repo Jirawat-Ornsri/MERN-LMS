@@ -30,7 +30,7 @@ const CourseDetailPage = () => {
       {/* Hero Section */}
       <div className="relative h-80 md:h-96 w-full">
         <div className="absolute inset-0 bg-black/50 z-10"></div>
-        <img src={course.image || "/placeholder.svg"} alt={course.title} className="w-full h-full object-cover" />
+        <img src={`/${course.image}` || "/placeholder.svg"} alt={course.title} className="w-full h-full object-cover" />
         <div className="absolute inset-0 z-20 flex flex-col justify-end p-6 md:p-10">
           <div className="w-fit px-3 py-1 bg-blue-600 text-white text-sm font-medium rounded-full mb-3">
             {course.subject}
@@ -60,7 +60,7 @@ const CourseDetailPage = () => {
           {/* Course Details */}
           <div className="md:col-span-2 space-y-8">
             {/* Description */}
-            <div className=" rounded-lg shadow-sm p-6">
+            <div className=" rounded-lg shadow-sm p-6 border">
               <h2 className="text-xl font-bold mb-4">รายละเอียดคอร์ส</h2>
               <p className="leading-relaxed">{course.description}</p>
 
@@ -90,10 +90,10 @@ const CourseDetailPage = () => {
             </div>
 
             {/* Instructor */}
-            <div className="b rounded-lg shadow-sm p-6">
+            <div className="b rounded-lg shadow-sm p-6 border">
               <h2 className="text-xl font-bold mb-4">ผู้สอน</h2>
               <div className="flex items-center">
-                <div className="h-16 w-16 rounded-full  flex items-center justify-center  text-xl font-bold mr-4">
+                <div className="h-16 w-16 rounded-full border  flex items-center justify-center  text-xl font-bold mr-4">
                   {course.instructor.charAt(0)}
                 </div>
                 <div>
@@ -104,7 +104,7 @@ const CourseDetailPage = () => {
             </div>
 
             {/* What You'll Learn */}
-            <div className="rounded-lg shadow-sm p-6">
+            <div className="rounded-lg shadow-sm p-6 border">
               <h2 className="text-xl font-bold mb-4">สิ่งที่คุณจะได้เรียนรู้</h2>
               <ul className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 {[1, 2, 3, 4, 5, 6].map((item) => (
@@ -126,15 +126,11 @@ const CourseDetailPage = () => {
 
           {/* Sidebar */}
           <div className="md:col-span-1">
-            <div className=" rounded-lg shadow-sm p-6 sticky top-8">
+            <div className=" rounded-lg shadow-sm p-6 sticky top-8 border">
               <div className="text-3xl font-bold mb-4">{formattedPrice}</div>
 
               <button className="btn btn-primary w-full font-medium py-3 px-4 rounded-lg transition-colors mb-4">
                 ลงทะเบียนเรียน
-              </button>
-
-              <button className="btn btn-ghost w-full  font-medium py-3 px-4 rounded-lg transition-colors mb-6">
-                ทดลองเรียนฟรี
               </button>
 
               <div className="space-y-4">
