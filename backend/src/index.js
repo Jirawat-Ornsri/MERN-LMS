@@ -6,6 +6,8 @@ import cors from "cors";
 import authRoutes from "./routes/auth.route.js";
 import courseRoute from "./routes/course.route.js";
 import userRoute from "./routes/user.route.js";
+import enrollRoute from './routes/enroll.route.js'
+
 import { connectDB } from './lib/db.js';
 
 
@@ -27,6 +29,7 @@ app.use(
 app.use("/api/auth", authRoutes)
 app.use("/api/course", courseRoute)
 app.use("/api/users", userRoute)
+app.use("/api/enroll", enrollRoute)
 
 app.listen(PORT, () => {
     console.log("server listening on port:",PORT);
