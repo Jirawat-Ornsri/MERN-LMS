@@ -56,7 +56,7 @@ const CourseDetailPage = () => {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto pt-16 pb-32">
+      <div className="max-w-[80%] mx-auto pt-16 pb-32">
         <Link to="/courses" className="inline-flex items-center mb-8">
           <ArrowLeft className="mr-2 h-4 w-4" />
           กลับไปยังหน้าคอร์สทั้งหมด

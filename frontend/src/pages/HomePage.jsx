@@ -7,7 +7,7 @@ const HomePage = () => {
   return (
     <div className="my-16">
       <Corasual />
-      <div className="sm:max-w-screen-sm md:max-w-screen-md lg:max-w-screen-xl mx-auto my-40">
+      <div className="max-w-[80%] mx-auto my-40">
         <Recommend />
         <CourseList />
       </div>
