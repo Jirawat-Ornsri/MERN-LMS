@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 
+// Updated course schema
 const courseSchema = new mongoose.Schema(
   {
     subject: {
@@ -14,31 +15,20 @@ const courseSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    category: {
+      type: [String], // Array of categories (e.g., ["Programming", "Web Development"])
+      required: true,
+    },
     image: {
       type: String,
-      default: "",
-    },
-    price: {
-      type: Number,
-      required: true,
+      default: "", // Default is an empty string if no image is provided
     },
     instructor: {
       type: String,
       required: true,
     },
-    rating: {
-      type: Number,
-      required: true,
-      min: 0,
-      max: 5,
-    },
-    students: {
-      type: Number,
-      required: true,
-      default: 0,
-    },
   },
-  { timestamps: true }
+  { timestamps: true } // Automatically adds createdAt and updatedAt fields
 );
 
 const Course = mongoose.model("Course", courseSchema);

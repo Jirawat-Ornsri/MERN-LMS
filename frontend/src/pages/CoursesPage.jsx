@@ -1,15 +1,25 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Filter } from "lucide-react";
-import mockCourses from "../data/course";
 import { Link } from "react-router-dom";
+import { useCourseStore } from "../store/useCourseStore";
 
 const CoursesPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedSubjects, setSelectedSubjects] = useState([]);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
+  // Fetching courses from the store
+  const { courses, getCourses, isFetchingCourses } = useCourseStore((state) => state);
+
+  // Fetch courses on component mount
+  useEffect(() => {
+    if (courses.length === 0) { // Only fetch if no courses are available
+      getCourses();
+    }
+  }, [courses, getCourses]);
+
   // ดึง Subject ทั้งหมดโดยไม่ซ้ำ
-  const subjects = [...new Set(mockCourses.map((course) => course.subject))];
+  const subjects = [...new Set(courses.map((course) => course.subject))];
 
   // อัปเดตค่า Checkbox
   const handleSubjectChange = (subject) => {
@@ -21,10 +31,9 @@ const CoursesPage = () => {
   };
 
   // ฟังก์ชันกรองคอร์ส
-  const filteredCourses = mockCourses.filter((course) => {
+  const filteredCourses = courses.filter((course) => {
     return (
-      (selectedSubjects.length === 0 ||
-        selectedSubjects.includes(course.subject)) &&
+      (selectedSubjects.length === 0 || selectedSubjects.includes(course.subject)) &&
       (searchTerm
         ? course.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
           course.instructor.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -32,6 +41,11 @@ const CoursesPage = () => {
         : true)
     );
   });
+
+  // If still fetching, show loading message
+  if (isFetchingCourses) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="min-h-screen flex flex-col md:flex-row py-16 px-5 md:px-10 lg:px-20">
@@ -45,9 +59,7 @@ const CoursesPage = () => {
         </button>
 
         <div
-          className={`md:block ${
-            isSidebarOpen ? "block" : "hidden"
-          }  p-4 rounded-lg shadow-md md:shadow-none`}
+          className={`md:block ${isSidebarOpen ? "block" : "hidden"} p-4 rounded-lg shadow-md md:shadow-none`}
         >
           <h2 className="text-lg font-bold mb-3">FILTERS BY SUBJECT</h2>
           <ul>
@@ -73,9 +85,7 @@ const CoursesPage = () => {
       <div className="md:w-3/4 lg:w-4/5">
         <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
           <div className="flex flex-row justify-between w-full items-center mt-5">
-            <h1 className="font-semibold">
-              ALL COURSES: {filteredCourses.length}
-            </h1>
+            <h1 className="font-semibold">ALL COURSES: {filteredCourses.length}</h1>
             <input
               type="text"
               placeholder="Search courses..."
@@ -89,7 +99,7 @@ const CoursesPage = () => {
         {/* Courses Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {filteredCourses.map((course) => (
-            <div key={course.id} className="card bg-base-100 w-full shadow-xl">
+            <div key={course._id} className="card bg-base-100 w-full shadow-xl">
               <figure>
                 <img
                   src={course.image}
@@ -101,7 +111,7 @@ const CoursesPage = () => {
                 <h2 className="card-title">{course.title}</h2>
                 <p>{course.description}</p>
                 <div className="card-actions justify-end">
-                  <Link to={`/course/${course.id}`} className="btn btn-primary">
+                  <Link to={`/course/${course._id}`} className="btn btn-primary">
                     See more
                   </Link>
                 </div>
@@ -110,9 +120,9 @@ const CoursesPage = () => {
           ))}
         </div>
 
-        {/* ถ้าไม่พบคอร์ส */}
+        {/* If no courses found */}
         {filteredCourses.length === 0 && (
-          <p className="text-center  mt-4">No courses found</p>
+          <p className="text-center mt-4">No courses found</p>
         )}
       </div>
     </div>
