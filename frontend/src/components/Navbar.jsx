@@ -10,7 +10,7 @@ import {
   MessageCircleMore,
   LibraryBig,
   Menu,
-  X
+  X,
 } from "lucide-react";
 
 const Navbar = () => {
@@ -36,13 +36,17 @@ const Navbar = () => {
   }, [isOpen]);
 
   return (
-    <header className="bg-base-100 border-b border-base-300 fixed w-full top-0 z-40 
-      backdrop-blur-lg bg-base-100/80">
+    <header
+      className="bg-base-100 border-b border-base-300 fixed w-full top-0 z-40 
+      backdrop-blur-lg bg-base-100/80"
+    >
       <div className="container mx-auto px-4 h-16">
         <div className="flex items-center justify-between h-full">
-          
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2.5 hover:opacity-80 transition-all">
+          <Link
+            to="/"
+            className="flex items-center gap-2.5 hover:opacity-80 transition-all"
+          >
             <div className="size-9 rounded-lg bg-primary/10 flex items-center justify-center">
               <BookOpenText className="w-5 h-5 text-primary" />
             </div>
@@ -56,19 +60,32 @@ const Navbar = () => {
 
           {/* Hamburger Menu สำหรับมือถือ */}
           <div className="md:hidden relative" ref={menuRef}>
-            <button 
-              className="btn btn-ghost" 
+            <button
+              className="btn btn-ghost"
               onClick={() => setIsOpen(!isOpen)}
             >
-              {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              {isOpen ? (
+                <X className="w-6 h-6" />
+              ) : (
+                <Menu className="w-6 h-6" />
+              )}
             </button>
 
             {/* Dropdown Menu */}
-            <div className={`absolute right-0 mt-2 w-48 bg-base-content shadow-lg rounded-lg transition-all duration-300 
-                ${isOpen ? "opacity-100 scale-100" : "opacity-0 scale-95 pointer-events-none"}`}
+            <div
+              className={`absolute right-0 mt-2 w-48 bg-base-content shadow-lg rounded-lg transition-all duration-300 
+                ${
+                  isOpen
+                    ? "opacity-100 scale-100"
+                    : "opacity-0 scale-95 pointer-events-none"
+                }`}
             >
               <div className="flex flex-col p-2 space-y-2">
-                <NavLinks authUser={authUser} logout={logout} setIsOpen={setIsOpen} />
+                <NavLinks
+                  authUser={authUser}
+                  logout={logout}
+                  setIsOpen={setIsOpen}
+                />
               </div>
             </div>
           </div>
@@ -81,30 +98,60 @@ const Navbar = () => {
 // แยก NavLinks เป็น Component
 const NavLinks = ({ authUser, logout, setIsOpen }) => (
   <>
-    <Link to="/courses" className="btn btn-sm gap-2" onClick={() => setIsOpen(false)}>
-      <School className="w-4 h-4" />
-      <span>Courses</span>
-    </Link>
-    <Link to="/mycourse" className="btn btn-sm gap-2" onClick={() => setIsOpen(false)}>
-      <LibraryBig className="w-4 h-4" />
-      <span>My Course</span>
-    </Link>
-    <Link to="/community" className="btn btn-sm gap-2" onClick={() => setIsOpen(false)}>
-      <MessageCircleMore className="w-4 h-4" />
-      <span>Community</span>
-    </Link>
-    <Link to="/settings" className="btn btn-sm gap-2" onClick={() => setIsOpen(false)}>
+    {authUser && (
+      <>
+        <Link
+          to="/courses"
+          className="btn btn-sm gap-2"
+          onClick={() => setIsOpen(false)}
+        >
+          <School className="w-4 h-4" />
+          <span>Courses</span>
+        </Link>
+        <Link
+          to="/mycourse"
+          className="btn btn-sm gap-2"
+          onClick={() => setIsOpen(false)}
+        >
+          <LibraryBig className="w-4 h-4" />
+          <span>My Course</span>
+        </Link>
+        <Link
+          to="/community"
+          className="btn btn-sm gap-2"
+          onClick={() => setIsOpen(false)}
+        >
+          <MessageCircleMore className="w-4 h-4" />
+          <span>Community</span>
+        </Link>
+      </>
+    )}
+    <Link
+      to="/settings"
+      className="btn btn-sm gap-2"
+      onClick={() => setIsOpen(false)}
+    >
       <Settings className="w-4 h-4" />
       <span>Settings</span>
     </Link>
-    
+
     {authUser && (
       <>
-        <Link to="/profile" className="btn btn-sm gap-2" onClick={() => setIsOpen(false)}>
+        <Link
+          to="/profile"
+          className="btn btn-sm gap-2"
+          onClick={() => setIsOpen(false)}
+        >
           <User className="size-5" />
           <span>Profile</span>
         </Link>
-        <button className="btn btn-error btn-sm flex gap-2 items-center justify-center" onClick={() => { logout(); setIsOpen(false); }}>
+        <button
+          className="btn btn-error btn-sm flex gap-2 items-center justify-center"
+          onClick={() => {
+            logout();
+            setIsOpen(false);
+          }}
+        >
           <LogOut className="size-5" />
           <span>Logout</span>
         </button>

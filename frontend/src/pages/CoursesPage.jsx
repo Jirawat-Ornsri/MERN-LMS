@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Filter } from "lucide-react";
+import { ChevronRight, ChevronDown } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useCourseStore } from "../store/useCourseStore";
 
@@ -52,14 +52,14 @@ const CoursesPage = () => {
       {/* Sidebar (Responsive) */}
       <div className="md:w-1/4 lg:w-1/5 md:pr-5">
         <button
-          className="mt-5 md:hidden flex items-center gap-2 text-primary font-bold mb-4"
+          className="mt-10 md:hidden flex items-center gap-2 text-xl font-bold mb-4"
           onClick={() => setIsSidebarOpen(!isSidebarOpen)}
         >
-          FILTER <Filter className="w-5 h-5" />
+          FILTERS {isSidebarOpen ? <ChevronDown className="w-5 h-5" /> :  <ChevronRight className="w-5 h-5" />} 
         </button>
 
         <div
-          className={`md:block ${isSidebarOpen ? "block" : "hidden"} p-4 rounded-lg shadow-md md:shadow-none`}
+          className={`md:block ${isSidebarOpen ? "block" : "hidden"} p-4 border mt-5 rounded-lg shadow-md md:shadow-none`}
         >
           <h2 className="text-lg font-bold mb-3">FILTERS BY SUBJECT</h2>
           <ul>
@@ -91,7 +91,7 @@ const CoursesPage = () => {
               placeholder="Search courses..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="border rounded-lg px-4 py-2 w-full md:w-64 sm:w-48"
+              className="border rounded-lg px-4 py-2 w-[30%]"
             />
           </div>
         </div>
