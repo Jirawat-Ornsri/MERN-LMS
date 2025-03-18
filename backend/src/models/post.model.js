@@ -1,49 +1,45 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
-// Comment Schema
-const commentSchema = new mongoose.Schema(
-  {
-    userId: {
-      type: String,
-      required: true,
-    },
-    comment: {
-      type: String,
-      required: true,
-    },
-    timestamp: {
-      type: Date,
-      default: Date.now,
-    },
-  },
-  { timestamps: true }
-);
-
-// Post Schema
+// สร้าง Schema สำหรับ Post
 const postSchema = new mongoose.Schema(
   {
-    postId: {
-      type: String,
-      required: true,
-      unique: true,
-    },
-    userId: {
-      type: String,
-      required: true,
-    },
     title: {
       type: String,
-      required: true,
+      required: true
     },
     content: {
       type: String,
-      required: true,
+      required: true
     },
-    comments: [commentSchema],  // Embed comment schema inside post
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User', // เชื่อมโยงกับ User model
+      required: true
+    },
+    comments: [
+      {
+        userId: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: 'User', // เชื่อมโยงกับ User model
+          required: true
+        },
+        comment: {
+          type: String,
+          required: true
+        },
+        timestamp: {
+          type: Date,
+          default: Date.now
+        }
+      }
+    ]
   },
-  { timestamps: true }
+  {
+    timestamps: true // จะสร้าง createdAt และ updatedAt อัตโนมัติ
+  }
 );
 
-const Post = mongoose.model("Post", postSchema);
+// สร้าง Post model
+const Post = mongoose.model('Post', postSchema);
 
 export default Post;
