@@ -28,6 +28,8 @@ app.use("/api/auth", authRoutes)
 app.use("/api/course", courseRoute)
 app.use("/api/users", userRoute)
 
+
+
 app.listen(PORT, () => {
     console.log("server listening on port:",PORT);
     connectDB()
