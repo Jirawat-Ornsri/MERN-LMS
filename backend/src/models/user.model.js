@@ -20,6 +20,10 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
+    enrolledCourses: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Course", // เชื่อมกับ collection Course
+      },
   },
   { timestamps: true }
 );
