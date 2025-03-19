@@ -7,6 +7,8 @@ import HomePage from "./pages/HomePage";
 import ProfilePage from "./pages/ProfilePage";
 import CommunityPage from "./pages/CommunityPage";
 import MyCoursePage from "./pages/MyCoursePage";
+import PostDetailPage from "./pages/PostDetailPage";
+
 
 import { Routes, Route, Navigate } from "react-router-dom";
 import { useAuthStore } from "./store/useAuthStore";
@@ -51,7 +53,7 @@ const App = () => {
         <Route path="/profile" element={authUser ? <ProfilePage /> : <Navigate to="/login" />} />
         <Route path="/community" element={authUser ? <CommunityPage /> : <Navigate to="/login" />} />
         <Route path="/mycourse" element={authUser ? <MyCoursePage /> : <Navigate to="/login" />} />
-
+        <Route path="/community/post/:postId" element={authUser ? <PostDetailPage /> : <Navigate to="/login" />} />
       </Routes>
 
       <Footer/>
