@@ -33,7 +33,7 @@ const MyCoursePage = () => {
   }
 
   return (
-    <div className='h-screen py-16 max-w-[80%] mx-auto'>
+    <div className='min-h-screen py-16 max-w-[80%] mx-auto'>
       <Header text1={"MY COURSES"}/>
       <div className='grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-8'>
         {enrollments.map((enrollment) => (
