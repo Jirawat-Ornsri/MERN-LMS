@@ -72,16 +72,12 @@ const WatchCoursePage = () => {
   };
 
   return (
-    <div className="h-screen py-16 max-w-7xl mx-auto grid grid-cols-3 gap-8">
-      {/* Video Player Section */}
-      <div className="col-span-2">
-        <h1 className="text-2xl font-semibold">{course.course_id?.title}</h1>
-
-        <div className="mt-6">
+    <div className="min-h-screen pt-32 pb-16 max-w-[90%] mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 px-4 md:px-0">
+      <div className="md:col-span-2">       
+        <div>
           {selectedVideo ? (
-            <div>
-              <h3 className="text-xl font-medium mb-2">{selectedVideo.title}</h3>
-              <video key={selectedVideo.video_id} width="100%" height="auto" controls className="rounded-lg shadow-lg">
+            <div>            
+              <video key={selectedVideo.video_id} className="w-full rounded-lg shadow-lg" controls>
                 <source src={selectedVideo.url} />
                 ขอโทษ, เบราว์เซอร์ของคุณไม่รองรับการเล่นวิดีโอนี้.
               </video>
@@ -92,9 +88,8 @@ const WatchCoursePage = () => {
         </div>
       </div>
 
-      {/* Sidebar Lessons */}
-      <div className="col-span-1 p-4 rounded-lg shadow-md">
-        <h3 className="text-4xl font-bold mb-4">Lessons</h3>
+      <div className="p-4 rounded-lg shadow-2xl">
+        <h1 className="text-2xl font-bold mb-6">{course.course_id?.title}</h1>
         <div className="space-y-4">
           {course.course_id?.lessons.map((lesson) => (
             <div key={lesson.lesson_id}>
@@ -107,8 +102,11 @@ const WatchCoursePage = () => {
               ))}
 
               {lesson.quiz && (
-                <div className="cursor-pointer p-2 bg-yellow-100 hover:bg-yellow-200 rounded mt-2" onClick={() => handleQuizSelect(lesson.quiz)}>
-                  <p>📝 {lesson.quiz.title}</p>
+                <div
+                  className="cursor-pointer p-2  hover:bg-primary-content rounded mt-2"
+                  onClick={() => setSelectedQuiz(lesson.quiz)}
+                >
+                  📝 {lesson.quiz.title}
                 </div>
               )}
             </div>
