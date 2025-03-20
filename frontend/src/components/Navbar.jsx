@@ -54,12 +54,12 @@ const Navbar = () => {
           </Link>
 
           {/* เมนูสำหรับหน้าจอใหญ่ */}
-          <div className="hidden md:flex items-center gap-4">
+          <div className="hidden lg:flex items-center gap-4">
             <NavLinks authUser={authUser} logout={logout} />
           </div>
 
           {/* Hamburger Menu สำหรับมือถือ */}
-          <div className="md:hidden relative" ref={menuRef}>
+          <div className="lg:hidden relative" ref={menuRef}>
             <button
               className="btn btn-ghost"
               onClick={() => setIsOpen(!isOpen)}
