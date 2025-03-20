@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { useEnrollStore } from "../store/useEnrollStore"; // นำเข้า store ที่ใช้ในการดึงข้อมูลคอร์ส
 import { useAuthStore } from "../store/useAuthStore"; // นำเข้า store ที่ใช้ในการดึงข้อมูลผู้ใช้งาน
 import Header from "../components/Header"
+import { Link } from 'react-router-dom';
 
 const MyCoursePage = () => {
   // ดึงข้อมูลผู้ใช้จาก store
@@ -36,7 +37,7 @@ const MyCoursePage = () => {
       <Header text1={"MY COURSES"}/>
       <div className='grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-8'>
         {enrollments.map((enrollment) => (
-          <div key={enrollment._id} className='rounded-lg shadow-lg p-4 border'>
+          <div key={enrollment._id} className='rounded-lg shadow-lg p-4 flex flex-col justify-between'>
             <img
               src={enrollment.course_id.image || '/placeholder.svg'}
               alt={enrollment.course_id.title}
@@ -45,11 +46,12 @@ const MyCoursePage = () => {
             <h2 className='text-xl font-semibold'>{enrollment.course_id.title}</h2>
             <p className='text-gray-600'>{enrollment.course_id.description}</p>
             <div className='mt-4'>
-              <button
+              <Link 
+                to={`/mycourse/${enrollment._id}`} 
                 className='btn btn-primary w-full font-medium py-3 px-4 rounded-lg'
               >
                 Course Detail
-              </button>
+              </Link>
             </div>
           </div>
         ))}
