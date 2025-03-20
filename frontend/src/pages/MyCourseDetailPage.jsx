@@ -53,7 +53,7 @@ const MyCourseDetailPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-16 px-4">
+    <div className="min-h-screen py-16 px-4">
       <Header text1={course.course_id?.title || "Course Title"} />
 
       <div className="max-w-4xl mx-auto text-center mb-12">
@@ -63,14 +63,14 @@ const MyCourseDetailPage = () => {
           className="mx-auto mb-6 rounded-lg shadow-xl"
           style={{ maxWidth: "100%", maxHeight: "300px", objectFit: "cover" }}
         />
-        <h2 className="text-3xl font-bold text-gray-800 mb-2">{course.course_id?.title}</h2>
+        <h2 className="text-3xl font-bold text-gray-500 mb-2">{course.course_id?.title}</h2>
         <p className="text-gray-600 text-sm mb-4">{course.course_id?.description}</p>
-        <p className="text-gray-700 text-md">Instructor: {course.course_id?.instructor}</p>
+        <p className="text-gray-500 text-md">Instructor: {course.course_id?.instructor}</p>
       </div>
 
       {/* Progress Bar */}
       <div className="max-w-4xl mx-auto mb-8">
-        <h3 className="text-xl font-semibold text-gray-800">Progress</h3>
+        <h3 className="text-xl font-semibold text-gray-500">Progress</h3>
         <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
           <div
             className="bg-blue-600 h-2 rounded-full"
@@ -83,10 +83,10 @@ const MyCourseDetailPage = () => {
       {/* เริ่มเรียน */}
       <div className="max-w-4xl mx-auto mb-6">
         <button
-          className="w-full py-3 px-6 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition duration-300 ease-in-out"
+          className="w-full py-3 px-6 bg-primary text-primary-content font-semibold rounded-lg shadow-md hover:bg-primary transition duration-300 ease-in-out"
           onClick={handleStartLearning}
         >
-          เริ่มเรียน
+          Start
         </button>
       </div>
     </div>

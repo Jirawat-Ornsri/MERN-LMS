@@ -1,60 +1,64 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useEnrollStore } from "../store/useEnrollStore";
+import { useAuthStore } from "../store/useAuthStore";
 
 const WatchCoursePage = () => {
   const { enrollment_id } = useParams(); // รับค่า enrollment_id จาก URL
-  const { enrollments } = useEnrollStore(); // ดึงข้อมูล enrollments จาก store
+  const { enrollments, getEnrollments, isFetching } = useEnrollStore(); // ดึงข้อมูล enrollments และสถานะการโหลดจาก store
   const [course, setCourse] = useState(null); // เก็บข้อมูล course
   const [selectedVideo, setSelectedVideo] = useState(null); // เก็บข้อมูลวิดีโอที่เลือก
+  const { authUser } = useAuthStore(); // ข้อมูลผู้ใช้ที่ลงชื่อเข้าใช้
 
   useEffect(() => {
-    const fetchEnrollment = () => {
-      // หาคอร์สจาก enrollment_id
-      const enrollment = enrollments.find((e) => e._id === enrollment_id);
+    // ฟังก์ชันนี้จะทำการดึงข้อมูล enrollment เมื่อ enrollments ว่าง
+    const fetchEnrollment = async () => {
+      if (enrollments.length === 0 && authUser?._id) {
+        await getEnrollments(authUser._id); // ดึงข้อมูลการลงทะเบียนจาก store
+      }
+      const enrollment = enrollments.find((e) => e._id === enrollment_id); // ค้นหา enrollment ตาม enrollment_id
 
-      // ถ้าเจอ enrollment ให้ตั้งค่า course และเลือกวิดีโอแรกจาก lessons
       if (enrollment) {
         setCourse(enrollment); // ตั้งค่า course
         if (enrollment.course_id?.lessons[0]?.videos) {
           setSelectedVideo(enrollment.course_id.lessons[0].videos[0]); // เลือกวิดีโอแรกจาก lessons
         }
-      } else {
-        console.log("Enrollment not found for id: ", enrollment_id);
       }
     };
 
-    // ถ้า enrollments ว่างให้รีเฟรชข้อมูลจาก API (หรือ store)
-    if (enrollments && enrollments.length > 0) {
+    // ถ้า enrollments ยังไม่ได้รับการโหลด ก็ให้โหลดข้อมูลใหม่
+    if (!isFetching && (enrollments.length === 0 || !course)) {
       fetchEnrollment();
-    } else {
-      console.log("No enrollments found, need to fetch data.");
     }
-  }, [enrollment_id, enrollments]); // รีเฟรชเมื่อ enrollment_id หรือ enrollments เปลี่ยน
 
-  if (!course) {
+  }, [enrollment_id, enrollments, getEnrollments, authUser, isFetching]);  // รีเฟรชเมื่อ enrollment_id, enrollments, getEnrollments หรือ authUser เปลี่ยนแปลง
+
+  // ตรวจสอบ selectedVideo เมื่อมันเปลี่ยน
+  useEffect(() => {
+    console.log("Selected video:", selectedVideo);
+  }, [selectedVideo]);
+
+  // ถ้ายังคงโหลดข้อมูลหรือยังไม่มี course
+  if (isFetching || !course) {
     return <div>Loading...</div>;
   }
 
+  // เมื่อคลิกที่วิดีโอใน Sidebar
   const handleVideoSelect = (video) => {
-    console.log("Selected Video: ", video); // ตรวจสอบว่ามีการเลือกวิดีโอใหม่
-    setSelectedVideo(video); // ตั้งค่าวิดีโอที่เลือก
-    console.log(selectedVideo.url);
+    // ตั้งค่าวิดีโอที่เลือก
+    setSelectedVideo(video);
+    console.log("Video selected:", video);
   };
 
-
-
   return (
-    <div className="h-screen py-16 max-w-7xl mx-auto grid grid-cols-3 gap-8">
-      <div className="col-span-2">
-        <h1 className="text-2xl font-semibold">{course.course_id?.title}</h1>
-
+    <div className="min-h-screen pt-32 pb-32 max-w-full mx-auto grid grid-cols-1 sm:grid-cols-3 gap-8 px-4">
+      <div className="col-span-1 sm:col-span-2">
         {/* แสดงวิดีโอที่เลือก */}
-        <div className="mt-6">
-          {selectedVideo && (
+        <div>
+          {selectedVideo ? (
             <div>
-              <h3 className="text-xl font-medium mb-2">{selectedVideo.title}</h3>
               <video
+                key={selectedVideo.video_id} // ใช้ key เพื่อให้ React รีเรนเดอร์ใหม่เมื่อ selectedVideo เปลี่ยนแปลง
                 width="100%"
                 height="auto"
                 controls
@@ -64,22 +68,24 @@ const WatchCoursePage = () => {
                 ขอโทษ, เบราว์เซอร์ของคุณไม่รองรับการเล่นวิดีโอนี้.
               </video>
             </div>
+          ) : (
+            <div>กรุณาเลือกวิดีโอเพื่อดู</div>
           )}
         </div>
       </div>
 
       {/* Sidebar สำหรับแสดงรายการวิดีโอ */}
-      <div className="col-span-1 bg-gray-100 p-4 rounded-lg shadow-md">
-        <h3 className="text-lg font-semibold mb-4">Videos</h3>
+      <div className="col-span-1 sm:col-span-1 p-4 rounded-lg shadow-xl">
+        <h1 className="text-3xl font-semibold mb-4">{course.course_id?.title}</h1>
         <div className="space-y-4">
           {course.course_id?.lessons.map((lesson) => (
             <div key={lesson.lesson_id}>
-              <h4 className="text-md font-semibold">{lesson.title}</h4>
+              <h4 className="text-lg font-semibold">{lesson.title}</h4>
               {lesson.videos.map((video) => (
                 <div
                   key={video.video_id}
-                  className="cursor-pointer p-2 hover:bg-gray-200 rounded"
-                  onClick={() => handleVideoSelect(video)} // เมื่อคลิกที่วิดีโอ ให้เลือกและแสดง
+                  className={`cursor-pointer p-2 hover:bg-gray-300 rounded ${selectedVideo?.video_id === video.video_id ? 'bg-gray-300' : ''}`} 
+                  onClick={() => handleVideoSelect(video)} 
                 >
                   <p>{video.title}</p>
                 </div>

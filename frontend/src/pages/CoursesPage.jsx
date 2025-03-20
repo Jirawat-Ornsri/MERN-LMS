@@ -59,7 +59,7 @@ const CoursesPage = () => {
         </button>
 
         <div
-          className={`md:block ${isSidebarOpen ? "block" : "hidden"} p-4 border mt-5 rounded-lg shadow-md md:shadow-none`}
+          className={`md:block ${isSidebarOpen ? "block" : "hidden"} p-4 mt-5 rounded-lg shadow-lg`}
         >
           <h2 className="text-lg font-bold mb-3">FILTERS BY SUBJECT</h2>
           <ul>
