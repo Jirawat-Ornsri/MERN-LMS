@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useEnrollStore } from "../store/useEnrollStore";
 import { useAuthStore } from "../store/useAuthStore";
+import { useUserStore } from "../store/useUserStore"; // เพิ่มการดึง store
+import Header from "../components/Header";
 import { MonitorPlay, Star } from 'lucide-react'
 
 
@@ -10,6 +12,7 @@ const MyCourseDetailPage = () => {
   const navigate = useNavigate();
   const { enrollments, getEnrollments } = useEnrollStore();
   const { authUser } = useAuthStore();
+  const { completedVideos, completedQuizzes, fetchCourseStatus } = useUserStore(); // ดึงข้อมูลสถานะคอร์ส
   const [course, setCourse] = useState(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("description");
@@ -22,12 +25,43 @@ const MyCourseDetailPage = () => {
       const enrollment = enrollments.find((e) => e._id === enrollment_id);
       if (enrollment) {
         setCourse(enrollment);
+        await fetchCourseStatus(enrollment.course_id._id, authUser._id); // ดึงข้อมูลสถานะคอร์ส
       }
       setLoading(false);
     };
-
+  
     fetchEnrollment();
-  }, [enrollment_id, enrollments, getEnrollments, authUser]);
+  }, [enrollment_id, enrollments, getEnrollments, authUser, fetchCourseStatus]);
+
+  const calculateProgress = () => {
+    if (!course?.course_id) return 0;
+  
+    let totalTasks = 0;
+    let completedTasks = 0;
+  
+    course.course_id.lessons.forEach((lesson) => {
+      totalTasks += lesson.videos.length;
+      if (lesson.quiz) totalTasks += 1;
+
+      lesson.videos.forEach((video) => {
+        if (completedVideos.has(String(video.video_id))) {
+          completedTasks += 1;
+        }
+      });
+
+      if (lesson.quiz && completedQuizzes.has(String(lesson.quiz.quiz_id))) {
+        completedTasks += 1;
+      }
+    });
+  
+    return totalTasks === 0 ? 0 : (completedTasks / totalTasks) * 100;
+  };
+  
+  const progress = calculateProgress();
+
+  const handleStartLearning = () => {
+    navigate(`/watch-course/${enrollment_id}`);
+  };
 
   if (loading) {
     return <div className="text-center text-gray-500 py-10">Loading...</div>;
@@ -37,16 +71,6 @@ const MyCourseDetailPage = () => {
     return <div className="text-center text-red-500 text-lg py-10">Enrollment not found</div>;
   }
 
-  // คำนวณ % ความคืบหน้า
-  const calculateProgress = () => {
-    if (!course.progress || course.progress.length === 0) {
-      return 0;
-    }
-    const completedLessons = course.progress.filter((lesson) => lesson.completed).length;
-    return (completedLessons / course.course_id.lessons.length) * 100;
-  };
-
-  const progress = calculateProgress();
 
   return (
     <div className="min-h-screen mt-16 py-14 flex justify-center px-4">
