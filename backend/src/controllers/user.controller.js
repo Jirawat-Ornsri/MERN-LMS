@@ -1,5 +1,6 @@
 import User from "../models/user.model.js";
 
+
 // ดึงข้อมูลผู้ใช้ทั้งหมด
 export const getAllUsers = async (req, res) => {
   try {
@@ -38,3 +39,4 @@ export const getSingleUser = async (req, res) => {
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
+

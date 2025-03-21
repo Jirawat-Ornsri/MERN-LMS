@@ -8,6 +8,10 @@ import ProfilePage from "./pages/ProfilePage";
 import CommunityPage from "./pages/CommunityPage";
 import MyCoursePage from "./pages/MyCoursePage";
 import PostDetailPage from "./pages/PostDetailPage";
+import MyCourseDetailPage from "./pages/MyCourseDetailPage";
+import WatchCoursePage from "./pages/WatchCoursePage";
+import CoursesPage from "./pages/CoursesPage";
+import CourseDetailPage from "./pages/CourseDetailPage";
 
 
 import { Routes, Route, Navigate } from "react-router-dom";
@@ -18,8 +22,6 @@ import { useEffect } from "react";
 import { Loader } from "lucide-react";
 import { Toaster } from "react-hot-toast";
 import Footer from "./components/Footer";
-import CoursesPage from "./pages/CoursesPage";
-import CourseDetailPage from "./pages/CourseDetailPage";
 import ScrollToTop from "./components/ScollingToTop";
 
 
@@ -52,8 +54,10 @@ const App = () => {
         <Route path="/settings" element={<SettingsPage />} />
         <Route path="/profile" element={authUser ? <ProfilePage /> : <Navigate to="/login" />} />
         <Route path="/community" element={authUser ? <CommunityPage /> : <Navigate to="/login" />} />
-        <Route path="/mycourse" element={authUser ? <MyCoursePage /> : <Navigate to="/login" />} />
         <Route path="/community/post/:postId" element={authUser ? <PostDetailPage /> : <Navigate to="/login" />} />
+        <Route path="/mycourse" element={authUser ? <MyCoursePage /> : <Navigate to="/login" />} />
+        <Route path="/mycourse/:enrollment_id" element={authUser ? <MyCourseDetailPage /> : <Navigate to="/login" />} />
+        <Route path="/watch-course/:enrollment_id" element={<WatchCoursePage />} />
       </Routes>
 
       <Footer/>

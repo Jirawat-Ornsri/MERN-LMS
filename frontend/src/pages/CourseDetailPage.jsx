@@ -21,6 +21,7 @@ const CourseDetailPage = () => {
   useEffect(() => {
     if (id) {
       getCourseById(id);
+      console.log(enrollments);
     }
   }, [id, getCourseById]);
 
@@ -99,28 +100,28 @@ const CourseDetailPage = () => {
           <div className="md:col-span-2 space-y-8">
             <div className="rounded-lg shadow-sm p-6 border">
               <h2 className="text-xl font-bold mb-4">รายละเอียดคอร์ส</h2>
-              <p className="leading-relaxed">{course.description}</p>
+              <p className="leading-relaxed text-gray-600">{course.description}</p>
 
               <div className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div className="flex items-start">
-                  <BookOpen className="h-5 w-5 mr-2 mt-0.5" />
+                  <BookOpen className="h-5 w-5 mr-2 mt-0.5 text-primary" />
                   <div>
                     <h3 className="font-medium">เนื้อหาครบถ้วน</h3>
-                    <p className="text-sm">{course.lessons.length} บทเรียน</p>
+                    <p className="text-sm text-gray-600">{course.lessons.length} บทเรียน</p>
                   </div>
                 </div>
                 <div className="flex items-start">
-                  <Clock className="h-5 w-5 mr-2 mt-0.5" />
+                  <Clock className="h-5 w-5 mr-2 mt-0.5 text-primary" />
                   <div>
                     <h3 className="font-medium">ระยะเวลา</h3>
-                    <p className="text-sm">20 ชั่วโมง</p>
+                    <p className="text-sm text-gray-600">20 ชั่วโมง</p>
                   </div>
                 </div>
                 <div className="flex items-start">
-                  <Calendar className="h-5 w-5 mr-2 mt-0.5" />
+                  <Calendar className="h-5 w-5 mr-2 mt-0.5 text-primary" />
                   <div>
                     <h3 className="font-medium">อัพเดทล่าสุด</h3>
-                    <p className="text-sm">มกราคม 2024</p>
+                    <p className="text-sm text-gray-600">มกราคม 2024</p>
                   </div>
                 </div>
               </div>
@@ -134,7 +135,7 @@ const CourseDetailPage = () => {
                 </div>
                 <div>
                   <h3 className="font-medium text-lg">{course.instructor}</h3>
-                  <p className="text-sm">ผู้เชี่ยวชาญด้าน {course.subject}</p>
+                  <p className="text-sm text-gray-600">ผู้เชี่ยวชาญด้าน {course.subject}</p>
                 </div>
               </div>
             </div>
@@ -159,7 +160,7 @@ const CourseDetailPage = () => {
                         d="M5 13l4 4L19 7"
                       />
                     </svg>
-                    <span>{lesson.title}</span>
+                    <span className="text-gray-600">{lesson.title}</span>
                   </li>
                 ))}
               </ul>
@@ -187,12 +188,12 @@ const CourseDetailPage = () => {
               )}
 
               <div className="flex justify-between items-center pb-2 border-b">
-                <span>ภาษา</span>
-                <span className="font-medium">ไทย</span>
+                <span className="font-semibold">ภาษา</span>
+                <span className="font-medium text-gray-600">ไทย</span>
               </div>
               <div className="flex justify-between items-center">
-                <span>การเข้าถึง</span>
-                <span className="font-medium">ตลอดชีพ</span>
+                <span className="font-semibold">การเข้าถึง</span>
+                <span className="font-medium text-gray-600">ตลอดชีพ</span>
               </div>
             </div>
           </div>

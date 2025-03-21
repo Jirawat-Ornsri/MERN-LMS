@@ -25,6 +25,7 @@ export const signup = async (req, res) => {
       fullName,
       email,
       password: hashedPassword,
+      profilePic: "https://res.cloudinary.com/dqbtthcqp/image/upload/v1739891336/s5cgnsoyoxhkvj1w68nk.png"
     });
 
     if (newUser) {

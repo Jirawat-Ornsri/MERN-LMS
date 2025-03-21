@@ -59,7 +59,7 @@ const CoursesPage = () => {
         </button>
 
         <div
-          className={`md:block ${isSidebarOpen ? "block" : "hidden"} p-4 border mt-5 rounded-lg shadow-md md:shadow-none`}
+          className={`md:block ${isSidebarOpen ? "block" : "hidden"} p-4 mt-5 rounded-lg shadow-lg`}
         >
           <h2 className="text-lg font-bold mb-3">FILTERS BY SUBJECT</h2>
           <ul>
@@ -97,7 +97,7 @@ const CoursesPage = () => {
         </div>
 
         {/* Courses Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {filteredCourses.map((course) => (
             <div key={course._id} className="card bg-base-100 w-full shadow-xl">
               <figure>
