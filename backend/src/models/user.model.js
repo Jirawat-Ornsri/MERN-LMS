@@ -6,7 +6,6 @@ const userSchema = new mongoose.Schema(
     fullName: { type: String, required: true },
     password: { type: String, required: true, minlength: 6 },
     profilePic: { type: String, default: "" },
-    enrolledCourses: [{ type: mongoose.Schema.Types.ObjectId, ref: "Course" }],
     completedVideos: [
       {
         course_id: { type: mongoose.Schema.Types.ObjectId, ref: "Course" },

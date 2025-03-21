@@ -5,11 +5,14 @@ import { Link } from "react-router-dom";
 
 const CourseList = () => {
   // Fetching courses from the store
-  const { courses, getCourses, isFetchingCourses } = useCourseStore((state) => state);
+  const { courses, getCourses, isFetchingCourses } = useCourseStore(
+    (state) => state
+  );
 
   // Fetch courses on component mount
   useEffect(() => {
-    if (courses.length === 0) { // Only fetch if no courses are available
+    if (courses.length === 0) {
+      // Only fetch if no courses are available
       getCourses();
     }
   }, [courses, getCourses]);
@@ -27,9 +30,13 @@ const CourseList = () => {
       <Header text1={"COURSES"} />
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {displayedCourses.map((course) => (
-          <div key={course._id} className="card bg-base-100 w-full shadow-xl">
-            <figure>
-              <img src={course.image} alt={course.title} className="w-full" />
+          <div key={course._id} className="bg-base-300 text-base-content card w-full shadow-xl">
+            <figure className="h-60 w-full overflow-hidden">
+              <img
+                src={course.image}
+                alt={course.title}
+                className="h-full w-full object-cover"
+              />
             </figure>
             <div className="card-body">
               <h2 className="card-title">{course.title}</h2>
@@ -45,7 +52,7 @@ const CourseList = () => {
       </div>
       <div className="text-center mt-7">
         <Link to={"/courses"}>
-          <p className="font-normal text-sm">Show all courses ➜</p>
+          <p className="font-normal text-sm text-primary">Show all courses ➜</p>
         </Link>
       </div>
     </div>

@@ -24,7 +24,7 @@ const CommunityPage = () => {
           onClick={() => setShowModal(true)}
           className="fixed bottom-4 right-4 w-14 h-14 flex items-center justify-center rounded-full bg-primary shadow-lg z-50"
         >
-          <SquarePen className="w-6 h-6" />
+          <SquarePen className="w-6 h-6 text-secondary-content" />
         </button>
 
         {isLoading ? (
@@ -34,7 +34,7 @@ const CommunityPage = () => {
             {posts
               .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
               .map((post) => (
-                <div key={post._id} className="p-4 rounded-lg shadow">
+                <div key={post._id} className="p-4 rounded-lg shadow bg-base-300 text-base-content">
                   <div className="flex items-center mb-3">
                     <img
                       src={post.userId?.profilePic || "/default-profile.png"}

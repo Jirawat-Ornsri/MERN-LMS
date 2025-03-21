@@ -6,6 +6,7 @@ import {
   BookOpen,
   Clock,
   Calendar,
+  Loader 
 } from "lucide-react";
 import { useCourseStore } from "../store/useCourseStore";
 import React, { useEffect } from "react";
@@ -32,16 +33,20 @@ const CourseDetailPage = () => {
   }, [authUser, getEnrollments]);
 
   if (isFetchingCourse) {
-    return <div>Loading...</div>;
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
   }
 
   if (!course) {
     return (
       <div className="flex flex-col items-center justify-center h-screen">
-        <h2 className="text-2xl font-bold text-gray-800">Course not found</h2>
+        <h2 className="text-2xl font-bold ">Course not found</h2>
         <Link
           to="/"
-          className="mt-4 flex items-center text-blue-600 hover:text-blue-800 transition-colors"
+          className="mt-4 flex items-center text-primary"
         >
           <ArrowLeft className="mr-2 h-4 w-4" />
           Back to Courses
@@ -71,7 +76,7 @@ const CourseDetailPage = () => {
           className="w-full h-full object-cover"
         />
         <div className="absolute inset-0 z-20 flex flex-col justify-end p-6 md:p-10">
-          <div className="w-fit px-3 py-1 bg-blue-600 text-white text-sm font-medium rounded-full mb-3">
+          <div className="w-fit px-3 py-1 bg-accent text-base-100 text-sm font-medium rounded-full mb-3">
             {course.subject}
           </div>
           <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">
@@ -98,7 +103,7 @@ const CourseDetailPage = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div className="md:col-span-2 space-y-8">
-            <div className="rounded-lg shadow-sm p-6 border">
+            <div className="rounded-lg shadow-sm p-6 bg-base-300 text-base-content">
               <h2 className="text-xl font-bold mb-4">รายละเอียดคอร์ส</h2>
               <p className="leading-relaxed text-gray-600">{course.description}</p>
 
@@ -127,7 +132,7 @@ const CourseDetailPage = () => {
               </div>
             </div>
 
-            <div className="rounded-lg shadow-sm p-6 border">
+            <div className="rounded-lg shadow-sm p-6 bg-base-300 text-base-content">
               <h2 className="text-xl font-bold mb-4">ผู้สอน</h2>
               <div className="flex items-center">
                 <div className="h-16 w-16 rounded-full border flex items-center justify-center text-xl font-bold mr-4">
@@ -140,7 +145,7 @@ const CourseDetailPage = () => {
               </div>
             </div>
 
-            <div className="rounded-lg shadow-sm p-6 border">
+            <div className="rounded-lg shadow-sm p-6 bg-base-300 text-base-content">
               <h2 className="text-xl font-bold mb-4">
                 สิ่งที่คุณจะได้เรียนรู้
               </h2>
@@ -168,7 +173,7 @@ const CourseDetailPage = () => {
           </div>
 
           <div className="md:col-span-1">
-            <div className="rounded-lg shadow-sm p-6 top-8 border">
+            <div className="rounded-lg shadow-sm p-6 top-8 bg-base-300 text-base-content">
               <div className="text-3xl font-bold mb-4">Free</div>
 
               {isEnrolled ? (

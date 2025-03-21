@@ -29,7 +29,7 @@ const PostDetailPage = () => {
 
   return (
     <div className="min-h-screen p-6 mt-16 mb-16">
-      <div className="max-w-2xl mx-auto p-4 rounded-lg shadow">
+      <div className="max-w-2xl mx-auto p-4 rounded-lg shadow bg-base-300 text-base-content">
         {selectedPost ? (
           <>
             {/* โชว์ข้อมูลเจ้าของโพสต์ */}
