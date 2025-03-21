@@ -142,7 +142,6 @@ const WatchCoursePage = () => {
         <div>
           {selectedVideo ? (
             <div>
-              <h3 className="text-xl font-medium mb-2">{selectedVideo.title}</h3>
               <video
                 key={selectedVideo.video_id}
                 width="100%"
@@ -171,7 +170,7 @@ const WatchCoursePage = () => {
               {lesson.videos.map((video) => (
                 <div
                   key={video.video_id}
-                  className={`cursor-pointer p-2 hover:bg-primary-content rounded ${selectedVideo?.video_id === video.video_id ? "bg-primary-content" : ""}`}
+                  className={`cursor-pointer p-2 hover:bg-secondary rounded ${selectedVideo?.video_id === video.video_id ? "bg-secondary" : ""}`}
                   onClick={() => handleVideoSelect(video, lesson)}
                 >
                   <p>
