@@ -30,7 +30,7 @@ const Recommend = () => {
       <Header text1={"RECOMMENDED"} />
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {displayedCourses.map((course) => (
-          <div key={course._id} className="card bg-base-100 w-full shadow-xl">
+          <div key={course._id} className="bg-base-300 text-base-content card w-full shadow-xl">
             <figure className="h-60 w-full overflow-hidden">
               <img
                 src={course.image}

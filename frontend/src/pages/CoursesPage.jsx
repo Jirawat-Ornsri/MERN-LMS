@@ -59,7 +59,7 @@ const CoursesPage = () => {
         </button>
 
         <div
-          className={`md:block ${isSidebarOpen ? "block" : "hidden"} p-4 mt-5 rounded-lg shadow-lg`}
+          className={`md:block ${isSidebarOpen ? "block" : "hidden"} p-4 mt-5 rounded-lg bg-base-200 text-base-content`}
         >
           <h2 className="text-lg font-bold mb-3">FILTERS BY SUBJECT</h2>
           <ul>
@@ -83,6 +83,7 @@ const CoursesPage = () => {
 
       {/* Main Content */}
       <div className="md:w-3/4 lg:w-4/5">
+        {/* search bar */}
         <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
           <div className="flex flex-row justify-between w-full items-center mt-5">
             <h1 className="font-semibold">ALL COURSES: {filteredCourses.length}</h1>
@@ -91,7 +92,7 @@ const CoursesPage = () => {
               placeholder="Search courses..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="border rounded-lg px-4 py-2 w-[30%]"
+              className="bg-base-300 text-base-content rounded-lg px-4 py-2 w-[30%]"
             />
           </div>
         </div>
@@ -99,7 +100,7 @@ const CoursesPage = () => {
         {/* Courses Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {filteredCourses.map((course) => (
-            <div key={course._id} className="card bg-base-100 w-full shadow-xl">
+            <div key={course._id} className="card bg-base-300 text-base-content w-full shadow-xl">
               <figure>
                 <img
                   src={course.image}

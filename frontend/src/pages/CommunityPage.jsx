@@ -34,7 +34,7 @@ const CommunityPage = () => {
             {posts
               .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
               .map((post) => (
-                <div key={post._id} className="p-4 rounded-lg shadow">
+                <div key={post._id} className="p-4 rounded-lg shadow bg-base-300 text-base-content">
                   <div className="flex items-center mb-3">
                     <img
                       src={post.userId?.profilePic || "/default-profile.png"}

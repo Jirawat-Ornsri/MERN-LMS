@@ -53,7 +53,7 @@ const MyCoursePage = () => {
         {enrollments.map((enrollment) => (
           <div
             key={enrollment._id}
-            className="rounded-lg shadow-lg p-4 flex flex-col justify-between"
+            className="bg-base-300 text-base-content rounded-lg shadow-lg p-4 flex flex-col justify-between"
           >
             <img
               src={enrollment.course_id.image || "/placeholder.svg"}

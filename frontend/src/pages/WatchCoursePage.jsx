@@ -91,7 +91,7 @@ const WatchCoursePage = () => {
       </div>
       
       {/* --- side bar --- */}
-      <div className="p-4 rounded-lg shadow-2xl">
+      <div className="p-4 rounded-lg shadow-2xl bg-base-300 text-base-content">
         <h1 className="text-2xl font-bold mb-6">{course.course_id?.title}</h1>
         <div className="space-y-4">
           {course.course_id?.lessons.map((lesson) => (
