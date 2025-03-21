@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useEnrollStore } from "../store/useEnrollStore";
 import { useAuthStore } from "../store/useAuthStore";
+import QuizModal from "../components/QuizModal";
 
 const WatchCoursePage = () => {
   const { enrollment_id } = useParams();
@@ -73,6 +74,7 @@ const WatchCoursePage = () => {
 
   return (
     <div className="min-h-screen pt-32 pb-16 max-w-[90%] mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 px-4 md:px-0">
+      {/* --- video section --- */}
       <div className="md:col-span-2">       
         <div>
           {selectedVideo ? (
@@ -87,7 +89,8 @@ const WatchCoursePage = () => {
           )}
         </div>
       </div>
-
+      
+      {/* --- side bar --- */}
       <div className="p-4 rounded-lg shadow-2xl">
         <h1 className="text-2xl font-bold mb-6">{course.course_id?.title}</h1>
         <div className="space-y-4">
@@ -96,15 +99,15 @@ const WatchCoursePage = () => {
               <h4 className="text-md font-semibold">{lesson.title}</h4>
 
               {lesson.videos.map((video) => (
-                <div key={video.video_id} className={`cursor-pointer p-2 hover:bg-primary rounded ${selectedVideo?.video_id === video.video_id ? "bg-primary" : ""}`} onClick={() => handleVideoSelect(video, lesson)}>
-                  <p>🎬 {video.title}</p>
+                <div key={video.video_id} className={`cursor-pointer p-2 hover:bg-primary-content rounded ${selectedVideo?.video_id === video.video_id ? "bg-primary-content" : ""}`} onClick={() => handleVideoSelect(video, lesson)}>
+                  <p className="text-gray-500">🎬 {video.title}</p>
                 </div>
               ))}
 
               {lesson.quiz && (
                 <div
-                  className="cursor-pointer p-2  hover:bg-primary rounded mt-2"
-                  onClick={() => setSelectedQuiz(lesson.quiz)}
+                  className="text-gray-500 cursor-pointer p-2 hover:bg-primary-content rounded mt-2"
+                  onClick={() => handleQuizSelect(lesson.quiz)}
                 >
                   📝 {lesson.quiz.title}
                 </div>
@@ -116,44 +119,14 @@ const WatchCoursePage = () => {
 
       {/* ✅ Quiz Modal */}
       {selectedQuiz && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-          <div className="bg-primary-content p-6 rounded-lg w-1/2">
-            <h2 className="text-xl font-semibold text-primary">{selectedQuiz.title}</h2>
-            <div className="mt-4 space-y-4">
-              {selectedQuiz.questions.map((q, index) => (
-                <div key={q.question_id}>
-                  <p className="font-medium text-primary">{index + 1}. {q.question}</p>
-                  {q.options.map((option, idx) => (
-                    <div key={idx} className="flex items-center space-x-2 text-primary">
-                      <input type="radio" name={`q${index}`} value={option} checked={answers[q.question_id] === option} onChange={() => handleAnswerChange(q.question_id, option)} />
-                      <label>{option}</label>
-                    </div>
-                  ))}
-                </div>
-              ))}
-            </div>
-
-            <div className="mt-4 flex justify-between">
-              <button onClick={() => setSelectedQuiz(null)} className="bg-gray-500 text-white px-4 py-2 rounded">Close</button>
-              <button onClick={handleSubmitQuiz} className="bg-primary text-primary-content px-4 py-2 rounded">Submit</button>
-            </div>
-
-            {/* ✅ แสดงผลลัพธ์ */}
-            {result && (
-              <div className="mt-4 p-4 border-t">
-                <h3 className="font-bold text-primary">ผลลัพธ์: {result.score}/{result.total} ข้อถูกต้อง</h3>
-                <ul className="mt-2 space-y-2">
-                  {result.details.map((q) => (
-                    <li key={q.question_id} className={q.isCorrect ? "text-green-600" : "text-red-600"}>
-                      ✅ {q.isCorrect ? "ถูกต้อง" : "ผิด"} - {q.question}
-                      {!q.isCorrect && <span className="ml-2 text-gray-600">(เฉลย: {q.answer})</span>}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-          </div>
-        </div>
+        <QuizModal 
+          selectedQuiz={selectedQuiz} 
+          answers={answers} 
+          handleAnswerChange={handleAnswerChange} 
+          handleSubmitQuiz={handleSubmitQuiz} 
+          setSelectedQuiz={setSelectedQuiz} 
+          result={result} 
+        />
       )}
     </div>
   );

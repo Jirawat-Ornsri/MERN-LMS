@@ -1,8 +1,9 @@
-import React, { useEffect } from 'react';
+import React, { useEffect } from "react";
 import { useEnrollStore } from "../store/useEnrollStore"; // นำเข้า store ที่ใช้ในการดึงข้อมูลคอร์ส
 import { useAuthStore } from "../store/useAuthStore"; // นำเข้า store ที่ใช้ในการดึงข้อมูลผู้ใช้งาน
-import Header from "../components/Header"
-import { Link } from 'react-router-dom';
+import Header from "../components/Header";
+import { Link } from "react-router-dom";
+import { BookPlus, ArrowRight } from "lucide-react";
 
 const MyCoursePage = () => {
   // ดึงข้อมูลผู้ใช้จาก store
@@ -29,26 +30,44 @@ const MyCoursePage = () => {
 
   // ถ้าไม่มีการลงทะเบียน
   if (enrollments.length === 0) {
-    return <div>คุณยังไม่ได้ลงทะเบียนเรียนคอร์สใดๆ</div>;
+    return (
+      <div className="min-h-screen flex flex-col justify-center items-center">
+        <div className="flex flex-col items-center">
+          <BookPlus className="w-32 h-32" />
+          <p className="font-bold text-base md:text-2xl mt-5">
+            You don't have any courses registered yet.
+          </p>
+          <div className="flex flex-row text-primary text-sm mt-4">
+            <Link to={"/courses"}>Go to Courses Page</Link>
+            <ArrowRight className="ml-3 w-5" />
+          </div>
+        </div>
+      </div>
+    );
   }
 
   return (
-    <div className='min-h-screen py-16 max-w-[80%] mx-auto'>
-      <Header text1={"MY COURSES"}/>
-      <div className='grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-8'>
+    <div className="min-h-screen py-16 max-w-[80%] mx-auto">
+      <Header text1={"MY COURSES"} />
+      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-8">
         {enrollments.map((enrollment) => (
-          <div key={enrollment._id} className='rounded-lg shadow-lg p-4 flex flex-col justify-between'>
+          <div
+            key={enrollment._id}
+            className="rounded-lg shadow-lg p-4 flex flex-col justify-between"
+          >
             <img
-              src={enrollment.course_id.image || '/placeholder.svg'}
+              src={enrollment.course_id.image || "/placeholder.svg"}
               alt={enrollment.course_id.title}
-              className='w-full h-40 object-cover rounded-md mb-4'
+              className="w-full h-40 object-cover rounded-md mb-4"
             />
-            <h2 className='text-xl font-semibold'>{enrollment.course_id.title}</h2>
-            <p className='text-gray-600'>{enrollment.course_id.description}</p>
-            <div className='mt-4'>
-              <Link 
-                to={`/mycourse/${enrollment._id}`} 
-                className='btn btn-primary w-full font-medium py-3 px-4 rounded-lg'
+            <h2 className="text-xl font-semibold">
+              {enrollment.course_id.title}
+            </h2>
+            <p className="text-gray-600">{enrollment.course_id.description}</p>
+            <div className="mt-4">
+              <Link
+                to={`/mycourse/${enrollment._id}`}
+                className="btn btn-primary w-full font-medium py-3 px-4 rounded-lg"
               >
                 Course Detail
               </Link>

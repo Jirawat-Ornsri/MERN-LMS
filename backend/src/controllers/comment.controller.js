@@ -1,6 +1,6 @@
-import Comment from "../models/comment.model.js";
 import Post from "../models/post.model.js";
 import User from "../models/user.model.js"; 
+
 // ฟังก์ชันสำหรับการแสดงความคิดเห็นใต้โพสต์
 export const createComment = async (req, res) => {
   try {

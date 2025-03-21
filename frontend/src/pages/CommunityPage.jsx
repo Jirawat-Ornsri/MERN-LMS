@@ -24,7 +24,7 @@ const CommunityPage = () => {
           onClick={() => setShowModal(true)}
           className="fixed bottom-4 right-4 w-14 h-14 flex items-center justify-center rounded-full bg-primary shadow-lg z-50"
         >
-          <SquarePen className="w-6 h-6" />
+          <SquarePen className="w-6 h-6 text-secondary-content" />
         </button>
 
         {isLoading ? (
