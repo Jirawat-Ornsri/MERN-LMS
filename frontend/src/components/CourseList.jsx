@@ -52,7 +52,7 @@ const CourseList = () => {
       </div>
       <div className="text-center mt-7">
         <Link to={"/courses"}>
-          <p className="font-normal text-sm">Show all courses ➜</p>
+          <p className="font-normal text-sm text-primary">Show all courses ➜</p>
         </Link>
       </div>
     </div>

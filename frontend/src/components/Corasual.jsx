@@ -58,7 +58,7 @@ export default function Carousel() {
             {/* 🔹 คำอธิบายภาพครอบคลุมทั้งรูป และอยู่ตรงกลาง */}
             <div className="absolute inset-0 bg-black bg-opacity-80 flex flex-col items-center justify-center text-center text-white p-8">
               <h2 className="text-5xl md:text-7xl font-bold mb-16">{item.title}</h2>
-              <p className="text-lg md:text-2xl text-gray-400 max-w-2xl mb-10">{item.description}</p>
+              <p className="text-base md:text-lg text-gray-400 max-w-2xl mb-10">{item.description}</p>
               <a
                 href={item.link}
                 className="text-md font-semibold px-6 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-full transition"
