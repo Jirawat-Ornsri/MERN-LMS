@@ -6,11 +6,11 @@ const QuizModal = ({ selectedQuiz, answers, handleAnswerChange, handleSubmitQuiz
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center p-4">
       <div className="bg-primary-content p-6 rounded-lg w-full max-w-2xl md:w-3/4 lg:w-1/2">
-        <h2 className="text-xl font-semibold text-primary text-center">{selectedQuiz.title}</h2>
+        <h2 className="text-xl font-semibold text-center">{selectedQuiz.title}</h2>
         <div className="mt-4 space-y-4">
           {selectedQuiz.questions.map((q, index) => (
             <div key={q.question_id}>
-              <p className="font-medium text-primary">{index + 1}. {q.question}</p>
+              <p className="font-medium ">{index + 1}. {q.question}</p>
               {q.options.map((option, idx) => (
                 <div key={idx} className="flex items-center space-x-2 text-primary">
                   <input
@@ -27,7 +27,7 @@ const QuizModal = ({ selectedQuiz, answers, handleAnswerChange, handleSubmitQuiz
           ))}
         </div>
 
-        <div className="mt-4 flex justify-between">
+        <div className="mt-16 flex justify-between">
           <button onClick={() => setSelectedQuiz(null)} className="bg-gray-500 text-white px-4 py-2 rounded w-1/3 md:w-1/4">Close</button>
           <button onClick={handleSubmitQuiz} className="bg-primary text-primary-content px-4 py-2 rounded w-1/3 md:w-1/4">Submit</button>
         </div>

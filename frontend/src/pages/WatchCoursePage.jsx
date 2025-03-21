@@ -99,14 +99,14 @@ const WatchCoursePage = () => {
               <h4 className="text-md font-semibold">{lesson.title}</h4>
 
               {lesson.videos.map((video) => (
-                <div key={video.video_id} className={`cursor-pointer p-2 hover:bg-primary-content rounded ${selectedVideo?.video_id === video.video_id ? "bg-primary-content" : ""}`} onClick={() => handleVideoSelect(video, lesson)}>
-                  <p className="text-gray-500">🎬 {video.title}</p>
+                <div key={video.video_id} className={`cursor-pointer p-2 hover:bg-secondary rounded ${selectedVideo?.video_id === video.video_id ? "bg-secondary" : ""}`} onClick={() => handleVideoSelect(video, lesson)}>
+                  <p className="text-base">🎬 {video.title}</p>
                 </div>
               ))}
 
               {lesson.quiz && (
                 <div
-                  className="text-gray-500 cursor-pointer p-2 hover:bg-primary-content rounded mt-2"
+                  className="text-base cursor-pointer p-2 hover:bg-secondary rounded mt-2"
                   onClick={() => handleQuizSelect(lesson.quiz)}
                 >
                   📝 {lesson.quiz.title}

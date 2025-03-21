@@ -76,7 +76,7 @@ const CourseDetailPage = () => {
           className="w-full h-full object-cover"
         />
         <div className="absolute inset-0 z-20 flex flex-col justify-end p-6 md:p-10">
-          <div className="w-fit px-3 py-1 bg-blue-600 text-white text-sm font-medium rounded-full mb-3">
+          <div className="w-fit px-3 py-1 bg-accent text-base-100 text-sm font-medium rounded-full mb-3">
             {course.subject}
           </div>
           <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">
