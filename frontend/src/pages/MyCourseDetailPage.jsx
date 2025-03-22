@@ -3,7 +3,6 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useEnrollStore } from "../store/useEnrollStore";
 import { useAuthStore } from "../store/useAuthStore";
 import { useUserStore } from "../store/useUserStore"; // เพิ่มการดึง store
-import Header from "../components/Header";
 import { MonitorPlay, Star } from 'lucide-react'
 
 

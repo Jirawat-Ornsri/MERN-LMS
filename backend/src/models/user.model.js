@@ -6,6 +6,7 @@ const userSchema = new mongoose.Schema(
     fullName: { type: String, required: true },
     password: { type: String, required: true, minlength: 6 },
     profilePic: { type: String, default: "" },
+    interests: { type: Array },
     completedVideos: [
       {
         course_id: { type: mongoose.Schema.Types.ObjectId, ref: "Course" },
