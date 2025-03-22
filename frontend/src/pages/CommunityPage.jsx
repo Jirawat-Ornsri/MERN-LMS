@@ -62,9 +62,9 @@ const CommunityPage = () => {
                   {/* ปุ่มแสดงความคิดเห็น พร้อมไอคอน */}
                   <Link
                     to={`/community/post/${post._id}`}
-                    className="flex items-center text-primary"
+                    className="flex items-center text-primary font-semibold"
                   >
-                    <MessageCircle className="w-5 h-5 mr-1" /> แสดงความคิดเห็น
+                    <MessageCircle className="w-5 h-5 mr-1" /> Comments
                   </Link>
                 </div>
               ))}

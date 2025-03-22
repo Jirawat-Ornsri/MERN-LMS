@@ -93,7 +93,7 @@ const PostDetailPage = () => {
                     onChange={(e) => setComment(e.target.value)}
                   />
                   <button
-                    className="ml-2 bg-primary p-3 rounded-lg "
+                    className="ml-2 bg-primary p-3 rounded-lg"
                     onClick={handleCommentSubmit}
                   >
                     <Send className="w-5 h-5 text-primary-content" />
