@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { axiosInstance } from "../libs/axios.js";
 import toast from "react-hot-toast";
 
+
 export const useUserStore = create((set, get) => ({
   users: [],
   user: null,
@@ -10,6 +11,10 @@ export const useUserStore = create((set, get) => ({
   isFetchingUsers: false,
   isFetchingUser: false,
   error: null,
+  isPartyActive: false,
+
+  startParty: () => set({ isPartyActive: true }),
+  stopParty: () => set({ isPartyActive: false }),
 
   // ดึงข้อมูลผู้ใช้ทั้งหมด
   getAllUsers: async () => {
@@ -75,6 +80,9 @@ export const useUserStore = create((set, get) => ({
         set({
           completedVideos: new Set([...completedVideos, videoId]),
         });
+        toast('Congratulations!', { icon: '🥳'})
+        get().startParty(); // ✅ เรียก startParty()
+        setTimeout(() => get().stopParty(), 6000); // ✅ ปิด effect หลัง 6 วินาที
       } else {
         console.log("Video already completed");
       }
@@ -98,6 +106,9 @@ export const useUserStore = create((set, get) => ({
         set({
           completedQuizzes: new Set([...completedQuizzes, quizId]),
         });
+        toast('Congratulations!', { icon: '🥳'})
+        get().startParty(); // ✅ เรียก startParty()
+        setTimeout(() => get().stopParty(), 6000); // ✅ ปิด effect หลัง 6 วินาที
       }
     } catch (error) {
       console.error("Error updating quiz status:", error);
