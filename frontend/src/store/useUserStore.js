@@ -20,7 +20,7 @@ export const useUserStore = create((set, get) => ({
   getAllUsers: async () => {
     set({ isFetchingUsers: true, error: null });
     try {
-      const res = await axiosInstance.get("/api/users");
+      const res = await axiosInstance.get("/users");
       set({ users: res.data });
     } catch (error) {
       set({ error: error.response?.data?.message || "Error fetching users" });
@@ -34,7 +34,7 @@ export const useUserStore = create((set, get) => ({
   getSingleUser: async (id) => {
     set({ isFetchingUser: true, error: null });
     try {
-      const res = await axiosInstance.get(`/api/users/${id}`);
+      const res = await axiosInstance.get(`/users/${id}`);
       set({ user: res.data });
     } catch (error) {
       console.error("Error fetching user:", error);
@@ -48,7 +48,7 @@ export const useUserStore = create((set, get) => ({
   // ✅ ดึงสถานะวิดีโอและควิซ
   fetchUserStatus: async (userId, courseId) => {
     try {
-      const res = await axiosInstance.get(`/api/users/status/${userId}`);
+      const res = await axiosInstance.get(`/users/status/${userId}`);
       const data = res.data;
 
       const completedVideosResponse = data.completedVideos || [];
@@ -72,7 +72,7 @@ export const useUserStore = create((set, get) => ({
     try {
       const { completedVideos } = get();
       if (!completedVideos.has(videoId)) {
-        await axiosInstance.post("/api/users/update-video-status", {
+        await axiosInstance.post("/users/update-video-status", {
           userId,
           videos: [videoId],
           courseId,
@@ -98,7 +98,7 @@ export const useUserStore = create((set, get) => ({
     try {
       const { completedQuizzes } = get();
       if (!completedQuizzes.has(quizId)) { // เปลี่ยนชื่อ & เช็ก quizId เดียว
-        await axiosInstance.post("/api/users/update-quiz-status", {
+        await axiosInstance.post("/users/update-quiz-status", {
           userId,
           quizIds: [quizId], // Array ถูกต้อง
           courseId,
@@ -119,7 +119,7 @@ export const useUserStore = create((set, get) => ({
   // ✅ ดึงสถานะการเรียนของผู้ใช้
   getUserStatus: async (userId) => {
     try {
-      const res = await axiosInstance.get(`/api/users/status/${userId}`);
+      const res = await axiosInstance.get(`/users/status/${userId}`);
       return res.data;
     } catch (error) {
       console.error("Error fetching user status:", error);
@@ -131,7 +131,7 @@ export const useUserStore = create((set, get) => ({
    // ฟังก์ชันใหม่ดึงข้อมูลคอร์สและสถานะการเรียน
   fetchCourseStatus: async (enrollmentId, userId) => {
     try {
-      const res = await axiosInstance.get(`/api/users/status/${userId}`);
+      const res = await axiosInstance.get(`/users/status/${userId}`);
       const data = res.data;
 
       const completedVideosResponse = data.completedVideos || [];

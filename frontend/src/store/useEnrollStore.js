@@ -10,7 +10,7 @@ export const useEnrollStore = create((set, get) => ({
   // ลงทะเบียนเรียน
   enrollCourse: async (user_id, course_id) => {
     try {
-      const res = await axiosInstance.post("/api/enroll", { user_id, course_id });
+      const res = await axiosInstance.post("/enroll", { user_id, course_id });
       set((state) => ({ enrollments: [...state.enrollments, res.data.enrollment] }));
       toast.success("Enrolled successfully");
     } catch (error) {
@@ -24,7 +24,7 @@ export const useEnrollStore = create((set, get) => ({
   getEnrollments: async (user_id) => {
     set({ isFetching: true, error: null });
     try {
-      const res = await axiosInstance.get(`/api/enroll/${user_id}`);
+      const res = await axiosInstance.get(`/enroll/${user_id}`);
       set({ enrollments: res.data });
     } catch (error) {
       console.error("Error fetching enrollments:", error);
@@ -38,7 +38,7 @@ export const useEnrollStore = create((set, get) => ({
   // อัปเดตความคืบหน้าของวิดีโอ
   updateVideoProgress: async (enrollment_id, lesson_id, video_id) => {
     try {
-      const res = await axiosInstance.patch("/api/enroll/video-progress", { enrollment_id, lesson_id, video_id });
+      const res = await axiosInstance.patch("/enroll/video-progress", { enrollment_id, lesson_id, video_id });
       set((state) => ({
         enrollments: state.enrollments.map((enroll) =>
           enroll._id === enrollment_id ? res.data.enrollment : enroll
@@ -54,7 +54,7 @@ export const useEnrollStore = create((set, get) => ({
   // อัปเดตความคืบหน้าของแบบทดสอบ
   updateQuizProgress: async (enrollment_id, lesson_id, quiz_id) => {
     try {
-      const res = await axiosInstance.patch("/api/enroll/quiz-progress", { enrollment_id, lesson_id, quiz_id });
+      const res = await axiosInstance.patch("/enroll/quiz-progress", { enrollment_id, lesson_id, quiz_id });
       set((state) => ({
         enrollments: state.enrollments.map((enroll) =>
           enroll._id === enrollment_id ? res.data.enrollment : enroll
@@ -70,7 +70,7 @@ export const useEnrollStore = create((set, get) => ({
   // ตรวจสอบสถานะคอร์ส
   checkCourseCompletion: async (enrollment_id) => {
     try {
-      const res = await axiosInstance.get(`/api/enroll/check-completion/${enrollment_id}`);
+      const res = await axiosInstance.get(`/enroll/check-completion/${enrollment_id}`);
       set((state) => ({
         enrollments: state.enrollments.map((enroll) =>
           enroll._id === enrollment_id ? res.data.enrollment : enroll

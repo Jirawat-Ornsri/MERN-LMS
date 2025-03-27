@@ -13,7 +13,7 @@ export const useCourseStore = create((set, get) => ({
   getCourses: async () => {
     set({ isFetchingCourses: true, error: null });
     try {
-      const res = await axiosInstance.get("/api/course");
+      const res = await axiosInstance.get("/course");
       set({ courses: res.data });
       // toast.success("Courses fetched successfully");
     } catch (error) {
@@ -29,7 +29,7 @@ export const useCourseStore = create((set, get) => ({
   getCourseById: async (id) => {
     set({ isFetchingCourse: true, error: null });
     try {
-      const res = await axiosInstance.get(`/api/course/${id}`);
+      const res = await axiosInstance.get(`/course/${id}`);
       set({ course: res.data });
       // toast.success("Course fetched successfully");
     } catch (error) {
