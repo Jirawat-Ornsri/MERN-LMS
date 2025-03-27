@@ -22,8 +22,6 @@ app.use(
   cors({
     origin: `${process.env.FRONTEND_URL}`,
     credentials: true,
-    allowedHeaders: ["Content-Type", "Authorization"], // เพิ่ม headers ที่อนุญาต
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], // ระบุ Method ที่อนุญาต
   })
 );
 
