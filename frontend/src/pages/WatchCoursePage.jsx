@@ -13,7 +13,6 @@ const WatchCoursePage = () => {
   const { enrollments, getEnrollments, isFetching } = useEnrollStore();
   const [course, setCourse] = useState(null);
   const [selectedVideo, setSelectedVideo] = useState(null);
-  const [selectedLesson, setSelectedLesson] = useState(null);
   const [selectedQuiz, setSelectedQuiz] = useState(null);
   const [answers, setAnswers] = useState({});
   const [result, setResult] = useState(null);
@@ -32,8 +31,7 @@ const WatchCoursePage = () => {
       if (enrollment) {
         setCourse(enrollment);
         if (enrollment.course_id?.lessons[0]?.videos) {
-          setSelectedVideo(enrollment.course_id.lessons[0].videos[0]);
-          setSelectedLesson(enrollment.course_id.lessons[0]);
+          setSelectedVideo(enrollment.course_id.lessons[0].videos[0]);        
         }
       }
     };
@@ -57,9 +55,8 @@ const WatchCoursePage = () => {
     fetchUserStatus();
   }, [authUser, enrollment_id, course]);
 
-  const handleVideoSelect = (video, lesson) => {
+  const handleVideoSelect = (video) => {
     setSelectedVideo(video);
-    setSelectedLesson(lesson);
   };
 
   const handleQuizSelect = (quiz) => {
