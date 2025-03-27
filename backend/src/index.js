@@ -34,6 +34,11 @@ app.use("/api/comments", commentRoute);
 app.use("/api/post", postRoute)
 app.use("/api/enroll", enrollRoute)
 
+// api endpoints
+app.get('/',(req,res)=>{
+  res.send('API Working...');
+})
+
 app.listen(PORT, () => {
     console.log("server listening on port:",PORT);
     connectDB()
