@@ -6,7 +6,7 @@ const imageDetails = [
     src: "javaScript.jpg",
     title: "JavaScript",
     description: "JavaScript เป็นภาษาสคริปต์ ทีมีลักษณะการเขียนแบบโพรโทไทป์ ส่วนมากใช้ในหน้าเว็บเพื่อประมวลผลข้อมูลที่ฝั่งของผู้ใช้งาน แต่ก็ยังมีใช้เพื่อเพิ่มเติมความสามารถในการเขียนสคริปต์โดยฝังอยู่ในโปรแกรมอื่น ๆ",
-    link: "/course/67d7a77492cc9e7975ccd846"
+    link: "/course/67dc15cc9ecb9c261d1f2121"
   },
   {
     src: "ml.jpg",

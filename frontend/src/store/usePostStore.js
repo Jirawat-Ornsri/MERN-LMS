@@ -11,7 +11,7 @@ export const usePostStore = create((set, get) => ({
   fetchPosts: async () => {
     set({ isLoading: true });
     try {
-      const res = await axiosInstance.get("/post/");
+      const res = await axiosInstance.get("/api/post/");
       set({ posts: res.data });
     } catch (error) {
       console.error("Error fetching posts:", error);
@@ -24,7 +24,7 @@ export const usePostStore = create((set, get) => ({
   // โพสต์คำถามใหม่
   createPost: async (data) => {
     try {
-      const res = await axiosInstance.post("/post/", data);
+      const res = await axiosInstance.post("/api/post/", data);
       set((state) => ({ posts: [res.data, ...state.posts] }));
       toast.success("Post created successfully");
     } catch (error) {
@@ -37,7 +37,7 @@ export const usePostStore = create((set, get) => ({
   fetchSinglePost: async (postId) => {
     set({ isLoading: true });
     try {
-      const res = await axiosInstance.get(`/post/${postId}`);
+      const res = await axiosInstance.get(`/api/post/${postId}`);
       set({ selectedPost: res.data });
     } catch (error) {
       console.error("Error fetching post:", error);
@@ -50,7 +50,7 @@ export const usePostStore = create((set, get) => ({
   // คอมเมนต์ใต้โพสต์
   addComment: async (postId, data) => {
     try {
-      const res = await axiosInstance.post(`/post/${postId}/comment`, data);
+      const res = await axiosInstance.post(`/api/post/${postId}/comment`, data);
       set((state) => ({
         selectedPost: res.data,
         posts: state.posts.map((post) => (post._id === postId ? res.data : post)),
