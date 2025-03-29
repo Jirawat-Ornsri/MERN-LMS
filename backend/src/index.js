@@ -9,6 +9,7 @@ import userRoute from "./routes/user.route.js";
 import postRoute from "./routes/post.route.js";
 import commentRoute from "./routes/comment.route.js";
 import enrollRoute from "./routes/enroll.route.js";
+import reviewRoute from "./routes/review.route.js";
 
 import path from "path";
 
@@ -35,6 +36,7 @@ app.use("/api/posts", postRoute);
 app.use("/api/comments", commentRoute);
 app.use("/api/post", postRoute);
 app.use("/api/enroll", enrollRoute);
+app.use("/api/reviews", reviewRoute);
 
 
 if(process.env.NODE_ENV==="production") {

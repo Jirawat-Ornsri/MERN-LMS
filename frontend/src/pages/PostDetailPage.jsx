@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { usePostStore } from "../store/usePostStore";
 import { useAuthStore } from "../store/useAuthStore";
-import { Send } from "lucide-react"; 
+import { Send, Loader } from "lucide-react";
 
 const PostDetailPage = () => {
   const { postId } = useParams();
@@ -23,7 +23,7 @@ const PostDetailPage = () => {
     if (comment.trim()) {
       await addComment(postId, { userId: authUser._id, comment });
       setComment("");
-      fetchSinglePost(postId); 
+      fetchSinglePost(postId);
     }
   };
 
@@ -40,7 +40,9 @@ const PostDetailPage = () => {
                 className="w-10 h-10 rounded-full mr-3"
               />
               <div>
-                <p className="font-semibold">{selectedPost.userId?.fullName || "Unknown User"}</p>
+                <p className="font-semibold">
+                  {selectedPost.userId?.fullName || "Unknown User"}
+                </p>
                 <p className="text-xs text-gray-500">
                   {new Date(selectedPost.createdAt).toLocaleString()}
                 </p>
@@ -63,12 +65,16 @@ const PostDetailPage = () => {
                         className="w-8 h-8 rounded-full mr-3"
                       />
                       <div>
-                        <p className="font-semibold">{c.userId?.fullName || "Unknown User"}</p>
+                        <p className="font-semibold">
+                          {c.userId?.fullName || "Unknown User"}
+                        </p>
                         <p className="text-xs text-gray-500">
                           {c.timestamp
                             ? new Date(
-                                typeof c.timestamp === "object" && c.timestamp.$date
-                                  ? c.timestamp.$date.$numberLong || c.timestamp.$date
+                                typeof c.timestamp === "object" &&
+                                c.timestamp.$date
+                                  ? c.timestamp.$date.$numberLong ||
+                                    c.timestamp.$date
                                   : c.timestamp
                               ).toLocaleString()
                             : "Invalid Date"}
@@ -105,7 +111,9 @@ const PostDetailPage = () => {
             </div>
           </>
         ) : (
-          <p>Loading post...</p>
+          <div className="flex items-center justify-center h-screen">
+            <Loader className="size-10 animate-spin" />
+          </div>
         )}
       </div>
     </div>

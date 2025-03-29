@@ -39,7 +39,7 @@ const QuizModal = ({ selectedQuiz, answers, handleAnswerChange, handleSubmitQuiz
               {result.details.map((q) => (
                 <li key={q.question_id} className={q.isCorrect ? "text-green-600" : "text-red-600"}>
                   ✅ {q.isCorrect ? "ถูกต้อง" : "ผิด"} - {q.question}
-                  {/* {!q.isCorrect && <span className="ml-2 text-gray-600">(เฉลย: {q.answer})</span>} */}
+                  {!q.isCorrect && <span className="ml-2 text-gray-600">(เฉลย: {q.answer})</span>}
                 </li>
               ))}
             </ul>

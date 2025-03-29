@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { useCourseStore } from "../store/useCourseStore.js"; // Assuming the useCourseStore is in this path
 import Header from "./Header";
 import { Link } from "react-router-dom";
+import CourseCardSkeleton from "./skeletons/CourseCardSkeleton.jsx";
 
 const CourseList = () => {
   // Fetching courses from the store
@@ -19,7 +20,13 @@ const CourseList = () => {
 
   // If still fetching, show loading message
   if (isFetchingCourses) {
-    return <div>Loading...</div>;
+    return (
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+        {[...Array(4)].map((_, index) => (
+          <CourseCardSkeleton key={index} />
+        ))}
+      </div>
+    );
   }
 
   // Display only the first 4 courses
@@ -28,7 +35,7 @@ const CourseList = () => {
   return (
     <div className="my-10">
       <Header text1={"COURSES"} />
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
         {displayedCourses.map((course) => (
           <div key={course._id} className="bg-base-300 text-base-content card w-full shadow-xl">
             <figure className="h-60 w-full overflow-hidden">

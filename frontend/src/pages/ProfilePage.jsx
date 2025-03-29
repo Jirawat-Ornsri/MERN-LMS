@@ -3,7 +3,7 @@ import { useUserStore } from "../store/useUserStore"; // Import zustand store
 import { useAuthStore } from "../store/useAuthStore"; // ใช้ store ที่เก็บข้อมูลผู้ใช้ที่ล็อกอิน
 
 const ProfilePage = () => {
-  const { user, getSingleUser, isFetchingUser, error } = useUserStore();
+  const { user, getSingleUser } = useUserStore();
   const { authUser } = useAuthStore(); // ข้อมูลผู้ใช้ที่ล็อกอิน
 
   useEffect(() => {
@@ -12,8 +12,6 @@ const ProfilePage = () => {
     }
   }, [authUser, getSingleUser]);
 
-  if (isFetchingUser) return <p>Loading user profile...</p>;
-  if (error) return <p className="text-red-500">{error}</p>;
 
   return (
     <div className="h-screen flex flex-col items-center justify-center">
