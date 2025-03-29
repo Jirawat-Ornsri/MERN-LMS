@@ -96,50 +96,102 @@ const WatchCoursePage = () => {
     }
 
     let correctCount = 0;
-    const totalQuestions = selectedQuiz.questions.length;
-
     const results = selectedQuiz.questions.map((q) => {
       const isCorrect = answers[q.question_id] === q.answer;
       if (isCorrect) correctCount++;
       return { ...q, selectedAnswer: answers[q.question_id], isCorrect };
     });
 
-    setResult({ score: correctCount, total: totalQuestions, details: results });
+    setResult({
+      score: correctCount,
+      total: selectedQuiz.questions.length,
+      details: results,
+    });
 
-    // 🔹 เช็คว่าผู้ใช้ตอบถูกทุกข้อก่อนถึงจะอัปเดตสถานะ
-    if (correctCount === totalQuestions) {
-      if (!completedQuizzes.has(selectedQuiz.quiz_id)) {
-        try {
-          await updateQuizStatus(
-            authUser._id, // userId
-            selectedQuiz.quiz_id, // quizId
-            course.course_id._id // courseId
+    if (!completedQuizzes.has(selectedQuiz.quiz_id)) {
+      try {
+        await updateQuizStatus(
+          authUser._id, // userId
+          selectedQuiz.quiz_id, // quizId
+          course.course_id._id // courseId
+        );
+
+        setCompletedQuizzes((prev) => new Set([...prev, selectedQuiz.quiz_id]));
+
+        const data = await getUserStatus(authUser._id);
+        if (data) {
+          const currentCourseQuizzes = data.completedQuizzes.filter(
+            (item) => item.courseId === course.course_id._id
           );
-
           setCompletedQuizzes(
-            (prev) => new Set([...prev, selectedQuiz.quiz_id])
+            new Set(currentCourseQuizzes.map((item) => item.quizId))
           );
-
-          const data = await getUserStatus(authUser._id);
-          if (data) {
-            const currentCourseQuizzes = data.completedQuizzes.filter(
-              (item) => item.courseId === course.course_id._id
-            );
-            setCompletedQuizzes(
-              new Set(currentCourseQuizzes.map((item) => item.quizId))
-            );
-          }
-        } catch (error) {
-          console.error("Error updating quiz status:", error);
-          toast.error("Error updating quiz status");
         }
-      } else {
-        console.log("Quiz already completed, no update needed.");
+      } catch (error) {
+        console.error("Error updating quiz status:", error);
+        toast.error("Error updating quiz status");
       }
     } else {
-      toast.error("Test failed. Try again");
+      console.log("Quiz already completed, no update needed.");
     }
   };
+
+  // const handleSubmitQuiz = async () => {
+  //   const unanswered = selectedQuiz.questions.some(
+  //     (q) => !answers[q.question_id]
+  //   );
+  //   if (unanswered) {
+  //     toast("Please answer all questions before submitting your answer!", {
+  //       icon: "⚠️",
+  //     });
+  //     return;
+  //   }
+
+  //   let correctCount = 0;
+  //   const totalQuestions = selectedQuiz.questions.length;
+
+  //   const results = selectedQuiz.questions.map((q) => {
+  //     const isCorrect = answers[q.question_id] === q.answer;
+  //     if (isCorrect) correctCount++;
+  //     return { ...q, selectedAnswer: answers[q.question_id], isCorrect };
+  //   });
+
+  //   setResult({ score: correctCount, total: totalQuestions, details: results });
+
+  //   // 🔹 เช็คว่าผู้ใช้ตอบถูกทุกข้อก่อนถึงจะอัปเดตสถานะ
+  //   if (correctCount === totalQuestions) {
+  //     if (!completedQuizzes.has(selectedQuiz.quiz_id)) {
+  //       try {
+  //         await updateQuizStatus(
+  //           authUser._id, // userId
+  //           selectedQuiz.quiz_id, // quizId
+  //           course.course_id._id // courseId
+  //         );
+
+  //         setCompletedQuizzes(
+  //           (prev) => new Set([...prev, selectedQuiz.quiz_id])
+  //         );
+
+  //         const data = await getUserStatus(authUser._id);
+  //         if (data) {
+  //           const currentCourseQuizzes = data.completedQuizzes.filter(
+  //             (item) => item.courseId === course.course_id._id
+  //           );
+  //           setCompletedQuizzes(
+  //             new Set(currentCourseQuizzes.map((item) => item.quizId))
+  //           );
+  //         }
+  //       } catch (error) {
+  //         console.error("Error updating quiz status:", error);
+  //         toast.error("Error updating quiz status");
+  //       }
+  //     } else {
+  //       console.log("Quiz already completed, no update needed.");
+  //     }
+  //   } else {
+  //     toast.error("Test failed. Try again");
+  //   }
+  // };
 
   const handleVideoComplete = async (video) => {
     if (!completedVideos.has(video.video_id)) {
