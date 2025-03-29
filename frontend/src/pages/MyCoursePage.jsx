@@ -3,7 +3,7 @@ import { useEnrollStore } from "../store/useEnrollStore"; // นำเข้า 
 import { useAuthStore } from "../store/useAuthStore"; // นำเข้า store ที่ใช้ในการดึงข้อมูลผู้ใช้งาน
 import Header from "../components/Header";
 import { Link } from "react-router-dom";
-import { BookPlus, ArrowRight } from "lucide-react";
+import { BookPlus, ArrowRight, Loader } from "lucide-react";
 
 const MyCoursePage = () => {
   // ดึงข้อมูลผู้ใช้จาก store
@@ -20,7 +20,11 @@ const MyCoursePage = () => {
 
   // แสดงข้อมูลขณะที่กำลังโหลด
   if (isFetching) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <Loader className="size-10 animate-spin" />
+      </div>
+    );
   }
 
   // ถ้ามีข้อผิดพลาดในการดึงข้อมูล
@@ -49,7 +53,7 @@ const MyCoursePage = () => {
   return (
     <div className="min-h-screen max-w-[80%] mx-auto py-24">
       <Header text1={"MY COURSES"} />
-      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-4 gap-8">
         {enrollments.map((enrollment) => (
           <div
             key={enrollment._id}

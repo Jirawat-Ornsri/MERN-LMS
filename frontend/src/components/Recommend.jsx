@@ -2,9 +2,10 @@ import React, { useEffect } from "react";
 import { useCourseStore } from "../store/useCourseStore.js";
 import Header from "./Header";
 import { Link } from "react-router-dom";
-import { Loader, ArrowRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { useAuthStore } from "../store/useAuthStore.js";
 import { useUserStore } from "../store/useUserStore.js";
+import CourseCardSkeleton from "./skeletons/CourseCardSkeleton.jsx";
 
 const Recommend = () => {
   const { authUser } = useAuthStore();
@@ -22,8 +23,10 @@ const Recommend = () => {
 
   if (isFetchingCourses || !user) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader className="h-8 w-8 animate-spin text-primary" />
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+        {[...Array(4)].map((_, index) => (
+          <CourseCardSkeleton key={index} />
+        ))}
       </div>
     );
   }
@@ -38,8 +41,8 @@ const Recommend = () => {
           your profile.
         </p>
         <Link to={"/profile"} className="flex items-center text-primary mt-2">
-          <p className="text-sm">Go to Profile</p> 
-          <ArrowRight className="ml-1 w-4 h-4"/>
+          <p className="text-sm">Go to Profile</p>
+          <ArrowRight className="ml-1 w-4 h-4" />
         </Link>
       </div>
     );
@@ -53,7 +56,7 @@ const Recommend = () => {
   return (
     <div className="my-10">
       <Header text1={"RECOMMENDED"} />
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
         {recommendedCourses.length > 0 ? (
           recommendedCourses.map((course) => (
             <div

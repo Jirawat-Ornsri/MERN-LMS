@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { ChevronRight, ChevronDown } from "lucide-react";
+import { ChevronRight, ChevronDown, Loader } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useCourseStore } from "../store/useCourseStore";
 
@@ -44,7 +44,11 @@ const CoursesPage = () => {
 
   // If still fetching, show loading message
   if (isFetchingCourses) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <Loader className="size-10 animate-spin" />
+      </div>
+    );
   }
 
   return (
@@ -92,13 +96,13 @@ const CoursesPage = () => {
               placeholder="Search courses..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="bg-base-300 text-base-content rounded-lg px-4 py-2 w-[30%]"
+              className="bg-base-300 text-base-content rounded-lg px-4 py-2 w-[50%] lg:w-[30%]"
             />
           </div>
         </div>
 
         {/* Courses Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-6">
           {filteredCourses.map((course) => (
             <div key={course._id} className="card bg-base-300 text-base-content w-full shadow-xl">
               <figure>

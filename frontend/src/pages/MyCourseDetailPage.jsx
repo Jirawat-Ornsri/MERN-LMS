@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useEnrollStore } from "../store/useEnrollStore";
 import { useAuthStore } from "../store/useAuthStore";
 import { useUserStore } from "../store/useUserStore"; // เพิ่มการดึง store
-import { MonitorPlay, Star } from 'lucide-react'
+import { MonitorPlay, Star, ShieldAlert } from 'lucide-react'
 
 
 const MyCourseDetailPage = () => {
@@ -13,7 +13,6 @@ const MyCourseDetailPage = () => {
   const { authUser } = useAuthStore();
   const { completedVideos, completedQuizzes, fetchCourseStatus } = useUserStore(); // ดึงข้อมูลสถานะคอร์ส
   const [course, setCourse] = useState(null);
-  const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("description");
 
   useEffect(() => {
@@ -26,7 +25,6 @@ const MyCourseDetailPage = () => {
         setCourse(enrollment);
         await fetchCourseStatus(enrollment.course_id._id, authUser._id); // ดึงข้อมูลสถานะคอร์ส
       }
-      setLoading(false);
     };
   
     fetchEnrollment();
@@ -58,16 +56,15 @@ const MyCourseDetailPage = () => {
   
   const progress = calculateProgress();
 
-  const handleStartLearning = () => {
-    navigate(`/watch-course/${enrollment_id}`);
-  };
-
-  if (loading) {
-    return <div className="text-center text-gray-500 py-10">Loading...</div>;
-  }
 
   if (!course) {
-    return <div className="text-center text-red-500 text-lg py-10">Enrollment not found</div>;
+    return (
+      <div className="min-h-screen flex flex-col justify-center items-center">
+        <ShieldAlert className="w-36 h-36"/>
+        <div className="text-center text-lg py-7">Enrollment not found</div>
+        <button className="btn btn-error" onClick={() => navigate('/mycourse')}>Back</button>
+      </div>
+    )
   }
 
 
