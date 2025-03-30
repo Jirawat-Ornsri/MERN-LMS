@@ -2,7 +2,6 @@ import { create } from "zustand";
 import { axiosInstance } from "../libs/axios.js";
 import toast from "react-hot-toast";
 
-
 export const useUserStore = create((set, get) => ({
   users: [],
   user: null,
@@ -45,6 +44,18 @@ export const useUserStore = create((set, get) => ({
     }
   },
 
+  // ✅ อัปเดตโปรไฟล์
+  updateProfile: async (data) => {
+    try {
+      const res = await axiosInstance.put("/users/update-profile", data);
+      set({ user: res.data }); // อัปเดตข้อมูลผู้ใช้ใน store
+      toast.success("Profile updated successfully");
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      toast.error("Error updating profile");
+    }
+  },
+
   // ✅ ดึงสถานะวิดีโอและควิซ
   fetchUserStatus: async (userId, courseId) => {
     try {
@@ -54,12 +65,20 @@ export const useUserStore = create((set, get) => ({
       const completedVideosResponse = data.completedVideos || [];
       const completedQuizzesResponse = data.completedQuizzes || [];
 
-      const currentCourseVideos = completedVideosResponse.filter(item => item.courseId === courseId);
-      const currentCourseQuizzes = completedQuizzesResponse.filter(item => item.courseId === courseId);
+      const currentCourseVideos = completedVideosResponse.filter(
+        (item) => item.courseId === courseId
+      );
+      const currentCourseQuizzes = completedQuizzesResponse.filter(
+        (item) => item.courseId === courseId
+      );
 
       set({
-        completedVideos: new Set(currentCourseVideos.map(item => item.videoId)),
-        completedQuizzes: new Set(currentCourseQuizzes.map(item => item.quizId)),
+        completedVideos: new Set(
+          currentCourseVideos.map((item) => item.videoId)
+        ),
+        completedQuizzes: new Set(
+          currentCourseQuizzes.map((item) => item.quizId)
+        ),
       });
     } catch (error) {
       console.error("Error fetching user status:", error);
@@ -80,7 +99,7 @@ export const useUserStore = create((set, get) => ({
         set({
           completedVideos: new Set([...completedVideos, videoId]),
         });
-        toast('Congratulations!', { icon: '🥳'})
+        toast("Congratulations!", { icon: "🥳" });
         get().startParty(); // ✅ เรียก startParty()
         setTimeout(() => get().stopParty(), 6000); // ✅ ปิด effect หลัง 6 วินาที
       } else {
@@ -91,13 +110,13 @@ export const useUserStore = create((set, get) => ({
       toast.error("Error updating video status");
     }
   },
-  
 
   // ✅ อัปเดตสถานะควิซ
   updateQuizStatus: async (userId, quizId, courseId) => {
     try {
       const { completedQuizzes } = get();
-      if (!completedQuizzes.has(quizId)) { // เปลี่ยนชื่อ & เช็ก quizId เดียว
+      if (!completedQuizzes.has(quizId)) {
+        // เปลี่ยนชื่อ & เช็ก quizId เดียว
         await axiosInstance.post("/users/update-quiz-status", {
           userId,
           quizIds: [quizId], // Array ถูกต้อง
@@ -106,7 +125,7 @@ export const useUserStore = create((set, get) => ({
         set({
           completedQuizzes: new Set([...completedQuizzes, quizId]),
         });
-        toast('Congratulations!', { icon: '🥳'})
+        toast("Congratulations!", { icon: "🥳" });
         get().startParty(); // ✅ เรียก startParty()
         setTimeout(() => get().stopParty(), 6000); // ✅ ปิด effect หลัง 6 วินาที
       }
@@ -115,7 +134,7 @@ export const useUserStore = create((set, get) => ({
       toast.error("Error updating quiz status");
     }
   },
-  
+
   // ✅ ดึงสถานะการเรียนของผู้ใช้
   getUserStatus: async (userId) => {
     try {
@@ -127,8 +146,8 @@ export const useUserStore = create((set, get) => ({
       return null;
     }
   },
-  
-   // ฟังก์ชันใหม่ดึงข้อมูลคอร์สและสถานะการเรียน
+
+  // ฟังก์ชันใหม่ดึงข้อมูลคอร์สและสถานะการเรียน
   fetchCourseStatus: async (enrollmentId, userId) => {
     try {
       const res = await axiosInstance.get(`/users/status/${userId}`);
@@ -136,18 +155,25 @@ export const useUserStore = create((set, get) => ({
 
       const completedVideosResponse = data.completedVideos || [];
       const completedQuizzesResponse = data.completedQuizzes || [];
-  
-      const currentCourseVideos = completedVideosResponse.filter(item => item.courseId === enrollmentId);
-      const currentCourseQuizzes = completedQuizzesResponse.filter(item => item.courseId === enrollmentId);
-  
+
+      const currentCourseVideos = completedVideosResponse.filter(
+        (item) => item.courseId === enrollmentId
+      );
+      const currentCourseQuizzes = completedQuizzesResponse.filter(
+        (item) => item.courseId === enrollmentId
+      );
+
       set({
-        completedVideos: new Set(currentCourseVideos.map(item => item.videoId)),
-        completedQuizzes: new Set(currentCourseQuizzes.map(item => item.quizId)),
+        completedVideos: new Set(
+          currentCourseVideos.map((item) => item.videoId)
+        ),
+        completedQuizzes: new Set(
+          currentCourseQuizzes.map((item) => item.quizId)
+        ),
       });
     } catch (error) {
       console.error("Error fetching course status:", error);
       toast.error("Error fetching course status");
     }
   },
-
 }));

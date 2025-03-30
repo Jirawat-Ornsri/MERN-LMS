@@ -99,13 +99,9 @@ const MyCourseDetailPage = () => {
         </div>
 
         {/* Enrollment Dates */}
-        <p className="text-gray-500 text-sm mt-3">
+        <p className="text-gray-500 text-sm mt-4">
           <strong>Enrolled At:</strong>{" "}
           {new Date(course.enrolled_at).toLocaleDateString()}
-        </p>
-        <p className="text-gray-500 text-sm">
-          <strong>Created At:</strong>{" "}
-          {new Date(course.createdAt).toLocaleDateString()}
         </p>
 
         {/* Progress Bar */}

@@ -109,7 +109,7 @@ const CoursesPage = () => {
                 <img
                   src={course.image}
                   alt={course.title}
-                  className="w-full h-40 object-cover"
+                  className="w-full h-40 object-cover hover:scale-125 transition-all"
                 />
               </figure>
               <div className="card-body">

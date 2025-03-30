@@ -53,7 +53,7 @@ const MyCoursePage = () => {
   return (
     <div className="min-h-screen max-w-[80%] mx-auto py-24">
       <Header text1={"MY COURSES"} />
-      <div className="grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
         {enrollments.map((enrollment) => (
           <div
             key={enrollment._id}
@@ -62,7 +62,7 @@ const MyCoursePage = () => {
             <img
               src={enrollment.course_id.image || "/placeholder.svg"}
               alt={enrollment.course_id.title}
-              className="w-full h-40 object-cover rounded-md mb-4"
+              className="w-full h-40 object-cover rounded-md mb-4 "
             />
             <h2 className="text-xl font-semibold">
               {enrollment.course_id.title}
