@@ -286,7 +286,7 @@ const CourseDetailPage = () => {
                               <h3 className="font-semibold">
                                 {review.userId.fullName}
                               </h3>
-                              <p className="text-sm text-gray-500">Student</p>
+                              <p className="text-sm text-gray-500">{new Date(review.createdAt).toLocaleString()}</p>
                             </div>
                           </div>
 

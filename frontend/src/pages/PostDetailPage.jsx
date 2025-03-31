@@ -37,7 +37,7 @@ const PostDetailPage = () => {
               <img
                 src={selectedPost.userId?.profilePic || "/default-profile.png"}
                 alt="Profile"
-                className="w-10 h-10 rounded-full mr-3"
+                className="w-10 h-10 rounded-full object-cover mr-3"
               />
               <div>
                 <p className="font-semibold">
@@ -62,7 +62,7 @@ const PostDetailPage = () => {
                       <img
                         src={c.userId?.profilePic || "/default-profile.png"}
                         alt="User"
-                        className="w-8 h-8 rounded-full mr-3"
+                        className="w-8 h-8 rounded-full object-cover mr-3"
                       />
                       <div>
                         <p className="font-semibold">

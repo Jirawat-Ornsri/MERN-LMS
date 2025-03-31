@@ -226,7 +226,7 @@ const ProfilePage = () => {
                   ) : subjects.length === 0 ? (
                     <p className="text-gray-500">No subjects available</p>
                   ) : (
-                    <ul className="py-4 space-y-2 flex flex-col md:flex-row justify-between">
+                    <ul className="py-4 flex flex-col md:flex-row flex-wrap justify-between">
                       {subjects.map((subject) => (
                         <li key={subject} className="flex items-center gap-2">
                           <input
