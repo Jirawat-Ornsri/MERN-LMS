@@ -53,7 +53,9 @@ export const usePostStore = create((set, get) => ({
       const res = await axiosInstance.post(`/post/${postId}/comment`, data);
       set((state) => ({
         selectedPost: res.data,
-        posts: state.posts.map((post) => (post._id === postId ? res.data : post)),
+        posts: state.posts.map((post) =>
+          post._id === postId ? res.data : post
+        ),
       }));
       toast.success("Comment added successfully");
     } catch (error) {
@@ -61,4 +63,19 @@ export const usePostStore = create((set, get) => ({
       toast.error(error.response?.data?.message || "Failed to add comment");
     }
   },
+
+  // ลบโพสต์
+  deletePost: async (postId) => {
+    try {
+      await axiosInstance.delete(`/post/${postId}`);
+      set((state) => ({
+        posts: state.posts.filter((post) => post._id !== postId),
+      }));
+      toast.success("Post deleted successfully");
+    } catch (error) {
+      console.error("Error deleting post:", error);
+      toast.error(error.response?.data?.message || "Failed to delete post");
+    }
+  },
+  
 }));

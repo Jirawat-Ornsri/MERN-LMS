@@ -2,12 +2,16 @@ import React, { useEffect, useState, useRef } from "react";
 import { useUserStore } from "../store/useUserStore";
 import { useAuthStore } from "../store/useAuthStore";
 import { useCourseStore } from "../store/useCourseStore";
-import { Camera } from "lucide-react";
+import { Camera, Trash, SquareArrowOutUpRight } from "lucide-react";
+import { usePostStore } from "../store/usePostStore";
+import { Link } from "react-router-dom";
 
 const ProfilePage = () => {
   const { user, getSingleUser, updateProfile } = useUserStore();
   const { authUser } = useAuthStore();
   const { courses, getCourses, isFetchingCourses } = useCourseStore();
+  const { posts, fetchPosts, deletePost } = usePostStore();
+
   const [isEditing, setIsEditing] = useState(false);
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
@@ -15,10 +19,18 @@ const ProfilePage = () => {
   const [selectedInterests, setSelectedInterests] = useState([]);
   const fileInputRef = useRef(null);
   const [activeTab, setActiveTab] = useState("Personal Info");
+  const [isModalOpen, setIsModalOpen] = useState(false); // ใช้สำหรับเปิด/ปิด Modal
+  const [postToDelete, setPostToDelete] = useState(null); // เก็บโพสต์ที่ต้องการลบ
 
   useEffect(() => {
     if (authUser?._id) getSingleUser(authUser._id);
   }, [authUser, getSingleUser]);
+
+  useEffect(() => {
+    if (posts.length === 0) fetchPosts();
+  }, [posts.length, fetchPosts]);
+
+  const userPosts = posts.filter((post) => post.userId?._id === authUser?._id);
 
   useEffect(() => {
     if (user) {
@@ -33,6 +45,20 @@ const ProfilePage = () => {
   }, [courses, getCourses]);
 
   const subjects = [...new Set(courses.map((course) => course.subject))];
+
+  const handleDeletePost = async (postId) => {
+    setPostToDelete(postId); // เก็บ id ของโพสต์ที่ต้องการลบ
+    setIsModalOpen(true); // เปิด Modal
+  };
+
+  const handleConfirmDelete = async () => {
+    await deletePost(postToDelete); // ลบโพสต์
+    setIsModalOpen(false); // ปิด Modal
+  };
+
+  const handleCancelDelete = () => {
+    setIsModalOpen(false); // ปิด Modal
+  };
 
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
@@ -242,17 +268,19 @@ const ProfilePage = () => {
                   )
                 ) : (
                   <div className="flex flex-row">
-                  {selectedInterests.map((interest, index) => (
-                    <div key={index} className="bg-accent mr-2 w-max py-1 px-2 rounded-full">
-                      <p className="text-base-100 text-sm">{interest}</p>
-                    </div>
-                  ))}
-                </div>
-                
+                    {selectedInterests.map((interest, index) => (
+                      <div
+                        key={index}
+                        className="bg-accent mr-2 w-max py-1 px-2 rounded-full"
+                      >
+                        <p className="text-base-100 text-sm">{interest}</p>
+                      </div>
+                    ))}
+                  </div>
                 )}
 
                 <div className="flex justify-end space-x-2">
-                {isEditing ? (
+                  {isEditing ? (
                     <>
                       <button
                         onClick={handleCancel}
@@ -282,8 +310,74 @@ const ProfilePage = () => {
             {/* Activity Tab (Placeholder) */}
             {activeTab === "Activity" && (
               <div>
-                <h3 className="text-xl font-semibold mb-2">Activity</h3>
-                <p className="text-gray-500 text-sm">No activity to display.</p>
+                <h3 className="text-xl font-semibold mb-5">Your Activity</h3>
+
+                {userPosts.length === 0 ? (
+                  <p className="text-gray-500 text-sm">
+                    You haven't posted anything yet.
+                  </p>
+                ) : (
+                  <ul className="space-y-4">
+                    {userPosts.map((post) => (
+                      <li
+                        key={post._id}
+                        className="bg-base-100 rounded-lg p-4 shadow"
+                      >
+                        <h4 className="text-lg font-semibold">{post.title}</h4>
+                        <p className="text-sm text-gray-600 line-clamp-2">
+                          {post.content}
+                        </p>
+                        <div className="flex justify-between items-center mt-2">
+                          <span className="text-xs text-gray-400">
+                            {post.comments?.length || 0} comment(s)
+                          </span>
+                          <div className="flex items-center space-x-4">
+                            <Link
+                              to={`/community/post/${post._id}`}                            
+                              className="text-sm text-blue-500 flex items-center"
+                            >
+                              <p className="mr-1">view post</p>
+                              <SquareArrowOutUpRight className="w-3 h-3" />
+                            </Link>
+                            <button
+                              onClick={() => handleDeletePost(post._id)}
+                              className="text-red-500 hover:text-red-700"
+                              title="Delete Post"
+                            >
+                              <Trash className="w-4 h-4" />
+                            </button>
+                          </div>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+                {/* Modal Confirm Delete */}
+                {isModalOpen && (
+                  <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+                    <div className="bg-base-100 p-6 rounded-lg shadow-lg max-w-sm w-full">
+                      <h3 className="text-lg font-semibold">Are you sure?</h3>
+                      <p className="text-sm text-gray-500 mt-2">
+                        Do you really want to delete this post? This action
+                        cannot be undone.
+                      </p>
+                      <div className="flex justify-end space-x-4 mt-4">
+                        <button
+                          onClick={handleCancelDelete}
+                          className="px-4 py-2 text-gray-500 bg-base-300 rounded-md hover:bg-base-200"
+                        >
+                          Cancel
+                        </button>
+                        <button
+                          onClick={handleConfirmDelete}
+                          className="px-4 py-2 text-white bg-red-500 rounded-md hover:bg-red-700"
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
             )}
           </div>

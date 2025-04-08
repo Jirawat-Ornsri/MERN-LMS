@@ -18,7 +18,7 @@ export const getAllPosts = async (req, res) => {
 // ฟังก์ชันสำหรับสร้างโพสต์ใหม่
 export const createPost = async (req, res) => {
   try {
-    const { userId, title, content } = req.body; // รับข้อมูลจาก body
+    const { userId, title, content, tags } = req.body; // รับข้อมูลจาก body
 
     // ตรวจสอบว่า userId ที่ส่งมาเป็น ID ที่ถูกต้องหรือไม่
     if (!userId.match(/^[0-9a-fA-F]{24}$/)) {
@@ -35,7 +35,8 @@ export const createPost = async (req, res) => {
     const newPost = new Post({
       userId,
       title,
-      content
+      content,
+      tags
     });
 
     // บันทึกโพสต์ลงในฐานข้อมูล
@@ -118,3 +119,30 @@ export const getSinglePost = async (req, res) => {
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
+
+// ฟังก์ชันสำหรับลบโพสต์
+export const deletePost = async (req, res) => {
+  try {
+    const { postId } = req.params;
+
+    // ตรวจสอบว่า postId ถูกต้องหรือไม่
+    if (!postId.match(/^[0-9a-fA-F]{24}$/)) {
+      return res.status(400).json({ message: "Invalid post ID" });
+    }
+
+    // ตรวจสอบว่าโพสต์มีอยู่จริงหรือไม่
+    const post = await Post.findById(postId);
+    if (!post) {
+      return res.status(404).json({ message: "Post not found" });
+    }
+
+    // ลบโพสต์
+    await Post.findByIdAndDelete(postId);
+
+    res.status(200).json({ message: "Post deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting post:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
