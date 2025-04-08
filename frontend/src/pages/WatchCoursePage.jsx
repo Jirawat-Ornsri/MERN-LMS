@@ -162,18 +162,30 @@ const WatchCoursePage = () => {
   };
 
   const handleDownloadVideo = (videoUrl, videoTitle) => {
-    // สร้าง anchor tag สำหรับดาวน์โหลด
-    const link = document.createElement("a");
-    
-    // ตั้งค่า href เป็น URL ของวิดีโอ
-    link.href = videoUrl;
+    try {
+      // สร้าง anchor tag สำหรับดาวน์โหลด
+      const link = document.createElement("a");
   
-    // ตั้งค่า download เป็นชื่อไฟล์ที่ต้องการดาวน์โหลด (ถ้าไม่มีชื่อ จะใช้ชื่อ default)
-    link.download = videoTitle || "video.mp4"; // ปรับเป็นนามสกุลไฟล์ที่เหมาะสม (เช่น .mp4)
+      // ตรวจสอบว่า videoUrl ถูกต้อง
+      if (!videoUrl) {
+        console.error("URL ของวิดีโอไม่ถูกต้อง");
+        return;
+      }
   
-    // คลิกที่ link เพื่อดาวน์โหลดไฟล์
-    link.click();
+      // เพิ่ม fl_attachment ใน URL เพื่อให้ดาวน์โหลดอัตโนมัติ
+      const downloadUrl = `${videoUrl.replace('/video/upload/', '/video/upload/fl_attachment/')}`;
+  
+      // ตั้งค่า href เป็น URL ของวิดีโอที่ต้องการดาวน์โหลด
+      link.href = downloadUrl;
+  
+      // คลิกที่ link เพื่อดาวน์โหลดไฟล์
+      link.click();
+
+    } catch (error) {
+      console.error("เกิดข้อผิดพลาดในการดาวน์โหลด:", error);
+    }
   };
+  
   
 
   if (isFetching || !course) {
