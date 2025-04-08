@@ -6,7 +6,7 @@ import { Send, Loader } from "lucide-react";
 
 const PostDetailPage = () => {
   const { postId } = useParams();
-  const { selectedPost, fetchSinglePost, addComment } = usePostStore();
+  const { selectedPost, fetchSinglePost, addComment, isLoading } = usePostStore();
   const { authUser } = useAuthStore();
   const [comment, setComment] = useState("");
 
@@ -26,6 +26,14 @@ const PostDetailPage = () => {
       fetchSinglePost(postId);
     }
   };
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <Loader className="size-10 animate-spin" />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen p-6 mt-16 mb-16">
@@ -50,7 +58,7 @@ const PostDetailPage = () => {
             </div>
 
             <h1 className="text-2xl font-bold">{selectedPost.title}</h1>
-            <p className="mt-2">{selectedPost.content}</p>
+            <p className="mt-2 text-gray-500">{selectedPost.content}</p>
 
             {/* แสดงคอมเมนต์ */}
             <div className="mt-4">
