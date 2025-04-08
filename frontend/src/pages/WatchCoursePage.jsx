@@ -6,7 +6,7 @@ import { useUserStore } from "../store/useUserStore";
 import QuizModal from "../components/QuizModal";
 import PartyEffect from "../components/PartyEffect";
 import toast from "react-hot-toast";
-import { Loader } from "lucide-react";
+import { Loader, Download } from "lucide-react";
 
 const WatchCoursePage = () => {
   const { enrollment_id } = useParams();
@@ -136,63 +136,6 @@ const WatchCoursePage = () => {
     }
   };
 
-  // const handleSubmitQuiz = async () => {
-  //   const unanswered = selectedQuiz.questions.some(
-  //     (q) => !answers[q.question_id]
-  //   );
-  //   if (unanswered) {
-  //     toast("Please answer all questions before submitting your answer!", {
-  //       icon: "⚠️",
-  //     });
-  //     return;
-  //   }
-
-  //   let correctCount = 0;
-  //   const totalQuestions = selectedQuiz.questions.length;
-
-  //   const results = selectedQuiz.questions.map((q) => {
-  //     const isCorrect = answers[q.question_id] === q.answer;
-  //     if (isCorrect) correctCount++;
-  //     return { ...q, selectedAnswer: answers[q.question_id], isCorrect };
-  //   });
-
-  //   setResult({ score: correctCount, total: totalQuestions, details: results });
-
-  //   // 🔹 เช็คว่าผู้ใช้ตอบถูกทุกข้อก่อนถึงจะอัปเดตสถานะ
-  //   if (correctCount === totalQuestions) {
-  //     if (!completedQuizzes.has(selectedQuiz.quiz_id)) {
-  //       try {
-  //         await updateQuizStatus(
-  //           authUser._id, // userId
-  //           selectedQuiz.quiz_id, // quizId
-  //           course.course_id._id // courseId
-  //         );
-
-  //         setCompletedQuizzes(
-  //           (prev) => new Set([...prev, selectedQuiz.quiz_id])
-  //         );
-
-  //         const data = await getUserStatus(authUser._id);
-  //         if (data) {
-  //           const currentCourseQuizzes = data.completedQuizzes.filter(
-  //             (item) => item.courseId === course.course_id._id
-  //           );
-  //           setCompletedQuizzes(
-  //             new Set(currentCourseQuizzes.map((item) => item.quizId))
-  //           );
-  //         }
-  //       } catch (error) {
-  //         console.error("Error updating quiz status:", error);
-  //         toast.error("Error updating quiz status");
-  //       }
-  //     } else {
-  //       console.log("Quiz already completed, no update needed.");
-  //     }
-  //   } else {
-  //     toast.error("Test failed. Try again");
-  //   }
-  // };
-
   const handleVideoComplete = async (video) => {
     if (!completedVideos.has(video.video_id)) {
       try {
@@ -218,6 +161,21 @@ const WatchCoursePage = () => {
     }
   };
 
+  const handleDownloadVideo = (videoUrl, videoTitle) => {
+    // สร้าง anchor tag สำหรับดาวน์โหลด
+    const link = document.createElement("a");
+    
+    // ตั้งค่า href เป็น URL ของวิดีโอ
+    link.href = videoUrl;
+  
+    // ตั้งค่า download เป็นชื่อไฟล์ที่ต้องการดาวน์โหลด (ถ้าไม่มีชื่อ จะใช้ชื่อ default)
+    link.download = videoTitle || "video.mp4"; // ปรับเป็นนามสกุลไฟล์ที่เหมาะสม (เช่น .mp4)
+  
+    // คลิกที่ link เพื่อดาวน์โหลดไฟล์
+    link.click();
+  };
+  
+
   if (isFetching || !course) {
     return (
       <div className="flex items-center justify-center h-screen">
@@ -227,9 +185,9 @@ const WatchCoursePage = () => {
   }
 
   return (
-    <div className="min-h-screen pt-32 pb-16 max-w-[90%] mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 px-4 md:px-0">
+    <div className="min-h-screen pt-32 pb-16 max-w-[90%] mx-auto flex flex-col lg:flex-row gap-5">
       {/* --- video section --- */}
-      <div className="md:col-span-2">
+      <div className="w-full lg:w-[90%]">
         <div>
           {selectedVideo ? (
             <div>
@@ -261,22 +219,32 @@ const WatchCoursePage = () => {
               {lesson.videos.map((video) => (
                 <div
                   key={video.video_id}
-                  className={`cursor-pointer p-2 hover:bg-secondary rounded ${
+                  className={`cursor-pointer p-2 hover:bg-base-100 rounded ${
                     selectedVideo?.video_id === video.video_id
-                      ? "bg-secondary"
+                      ? "bg-base-100"
                       : ""
                   }`}
                   onClick={() => handleVideoSelect(video, lesson)}
                 >
-                  <p>
-                    {completedVideos.has(String(video.video_id)) && "✅"} 🎬{" "}
-                    {video.title}
-                  </p>
+                  <div className="flex items-center justify-between">
+                    <p>
+                      {completedVideos.has(String(video.video_id)) && "✅"} 🎬{" "}
+                      {video.title}
+                    </p>
+                    {selectedVideo?.video_id === video.video_id && (
+                      <Download
+                        className="w-5 h-5 text-primary"
+                        onClick={() =>
+                          handleDownloadVideo(video.url, video.title)
+                        }
+                      />
+                    )}
+                  </div>
                 </div>
               ))}
               {lesson.quiz && (
                 <div
-                  className="text-base cursor-pointer p-2 hover:bg-secondary rounded mt-2"
+                  className="text-base cursor-pointer p-2 hover:bg-base-100 rounded mt-2"
                   onClick={() => handleQuizSelect(lesson.quiz)}
                 >
                   <p>
