@@ -345,7 +345,7 @@ const WatchCoursePage = () => {
                 >
                   <div className="flex items-center justify-between">
                     <p>
-                      {completedVideos.has(String(video.video_id)) && "✅"} 🎬{" "}
+                      {completedVideos.has(String(video.video_id)) ? "✅" : ""} 🎬{" "}
                       {video.title}
                     </p>
                     {selectedVideo?.video_id === video.video_id && (
@@ -365,8 +365,8 @@ const WatchCoursePage = () => {
                   onClick={() => handleQuizSelect(lesson.quiz)}
                 >
                   <p>
-                    {completedQuizzes.has(String(lesson.quiz.quiz_id)) && "✅"}{" "}
-                    📝 {lesson.quiz.title}
+                  {completedQuizzes.has(lesson.quiz.quiz_id) ? "✅" : ""} 📝{" "}
+                  {lesson.quiz.title}
                   </p>
                 </div>
               )}
