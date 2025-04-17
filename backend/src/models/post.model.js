@@ -7,6 +7,10 @@ const postSchema = new mongoose.Schema(
       type: String,
       required: true
     },
+    tags: {
+      type: Array,
+      require:true
+    },
     content: {
       type: String,
       required: true

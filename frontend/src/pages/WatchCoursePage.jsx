@@ -6,7 +6,7 @@ import { useUserStore } from "../store/useUserStore";
 import QuizModal from "../components/QuizModal";
 import PartyEffect from "../components/PartyEffect";
 import toast from "react-hot-toast";
-import { Loader } from "lucide-react";
+import { Loader, Download } from "lucide-react";
 
 const WatchCoursePage = () => {
   const { enrollment_id } = useParams();
@@ -260,6 +260,32 @@ const WatchCoursePage = () => {
       shouldSetTime.current = false;
     }
   }, [selectedVideo, lastWatchedTime]);
+  const handleDownloadVideo = (videoUrl, videoTitle) => {
+    try {
+      // สร้าง anchor tag สำหรับดาวน์โหลด
+      const link = document.createElement("a");
+  
+      // ตรวจสอบว่า videoUrl ถูกต้อง
+      if (!videoUrl) {
+        console.error("URL ของวิดีโอไม่ถูกต้อง");
+        return;
+      }
+  
+      // เพิ่ม fl_attachment ใน URL เพื่อให้ดาวน์โหลดอัตโนมัติ
+      const downloadUrl = `${videoUrl.replace('/video/upload/', '/video/upload/fl_attachment/')}`;
+  
+      // ตั้งค่า href เป็น URL ของวิดีโอที่ต้องการดาวน์โหลด
+      link.href = downloadUrl;
+  
+      // คลิกที่ link เพื่อดาวน์โหลดไฟล์
+      link.click();
+
+    } catch (error) {
+      console.error("เกิดข้อผิดพลาดในการดาวน์โหลด:", error);
+    }
+  };
+  
+  
 
   if (isFetching || !course) {
     return (
@@ -270,68 +296,83 @@ const WatchCoursePage = () => {
   }
 
   return (
-    <div className="min-h-screen pt-32 pb-16 max-w-[90%] mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 px-4 md:px-0">
-      <div className="md:col-span-2">
-        {selectedVideo ? (
-          <video
-            ref={videoRef}
-            key={`${selectedVideo.video_id}`}
-            width="100%"
-            height="auto"
-            controls
-            className="rounded-lg shadow-lg"
-            onEnded={() => handleVideoComplete(selectedVideo)}
-            onLoadedMetadata={() => {
-              if (shouldSetTime.current && lastWatchedTime > 0) {
-                videoRef.current.currentTime = lastWatchedTime;
-                shouldSetTime.current = false;
-              }
-            }}
-          >
-            <source src={selectedVideo.url} />
-            ขอโทษ, เบราว์เซอร์ของคุณไม่รองรับการเล่นวิดีโอนี้.
-          </video>
-        ) : (
-          <div className="w-full h-[300px] flex items-center justify-center bg-base-200 rounded-lg">
-            <span className="text-lg">กำลังโหลดวิดีโอ...</span>
-          </div>
-        )}
+    <div className="min-h-screen pt-32 pb-16 max-w-[90%] mx-auto flex flex-col lg:flex-row gap-5">
+      {/* --- video section --- */}
+      <div className="w-full lg:w-[90%]">
+        <div>
+          {selectedVideo ? (
+            <div>
+              <video
+                ref={videoRef}
+                key={selectedVideo.video_id}
+                width="100%"
+                height="auto"
+                controls
+                className="rounded-lg shadow-lg"
+                onEnded={() => handleVideoComplete(selectedVideo)}
+                onLoadedMetadata={() => {
+                  if (shouldSetTime.current && lastWatchedTime > 0) {
+                    videoRef.current.currentTime = lastWatchedTime;
+                    shouldSetTime.current = false;
+                  }
+                }}
+              >
+                <source src={selectedVideo.url} />
+                ขอโทษ, เบราว์เซอร์ของคุณไม่รองรับการเล่นวิดีโอนี้.
+              </video>
+            </div>
+          ) : (
+            <div>กรุณาเลือกวิดีโอเพื่อดู</div>
+          )}
+        </div>
       </div>
 
       <div className="p-4 rounded-lg shadow-2xl bg-base-300 text-base-content">
         <h1 className="text-2xl font-bold mb-6">{course.course_id?.title}</h1>
-        {course.course_id?.lessons.map((lesson) => (
-          <div key={lesson.lesson_id}>
-            <h4 className="text-md font-semibold">{lesson.title}</h4>
-            {lesson.videos.map((video) => (
-              <div
-                key={video.video_id}
-                className={`cursor-pointer p-2 hover:bg-secondary rounded ${
-                  selectedVideo?.video_id === video.video_id
-                    ? "bg-secondary"
-                    : ""
-                }`}
-                onClick={() => handleVideoSelect(video)}
-              >
-                <p>
-                  {completedVideos.has(String(video.video_id)) ? "✅" : ""} 🎬{" "}
-                  {video.title}
-                </p>
-              </div>
-            ))}
-            {lesson.quiz && (
-              <div
-                className="cursor-pointer p-2 hover:bg-secondary rounded mt-2"
-                onClick={() => handleQuizSelect(lesson.quiz)}
-              >
-                <p>
-                  {completedQuizzes.has(lesson.quiz.quiz_id) ? "✅" : ""} 📝{" "}
-                  {lesson.quiz.title}
-                </p>
-              </div>
-            )}
-          </div>
-        ))}
+        <div className="space-y-4">
+          {course.course_id?.lessons.map((lesson) => (
+            <div key={lesson.lesson_id}>
+              <h4 className="text-md font-semibold">{lesson.title}</h4>
+              {lesson.videos.map((video) => (
+                <div
+                  key={video.video_id}
+                  className={`cursor-pointer p-2 hover:bg-base-100 rounded ${
+                    selectedVideo?.video_id === video.video_id
+                      ? "bg-base-100"
+                      : ""
+                  }`}
+                  onClick={() => handleVideoSelect(video, lesson)}
+                >
+                  <div className="flex items-center justify-between">
+                    <p>
+                      {completedVideos.has(String(video.video_id)) && "✅"} 🎬{" "}
+                      {video.title}
+                    </p>
+                    {selectedVideo?.video_id === video.video_id && (
+                      <Download
+                        className="w-5 h-5 text-primary"
+                        onClick={() =>
+                          handleDownloadVideo(video.url, video.title)
+                        }
+                      />
+                    )}
+                  </div>
+                </div>
+              ))}
+              {lesson.quiz && (
+                <div
+                  className="text-base cursor-pointer p-2 hover:bg-base-100 rounded mt-2"
+                  onClick={() => handleQuizSelect(lesson.quiz)}
+                >
+                  <p>
+                    {completedQuizzes.has(String(lesson.quiz.quiz_id)) && "✅"}{" "}
+                    📝 {lesson.quiz.title}
+                  </p>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
       </div>
 
       {selectedQuiz && (

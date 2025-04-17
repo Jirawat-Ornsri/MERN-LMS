@@ -67,7 +67,7 @@ const Recommend = () => {
                 <img
                   src={course.image}
                   alt={course.title}
-                  className="h-full w-full object-cover"
+                  className="h-full w-full object-cover hover:scale-125 transition-all"
                 />
               </figure>
               <div className="card-body">

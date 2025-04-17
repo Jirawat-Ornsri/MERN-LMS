@@ -2,7 +2,6 @@ import { create } from "zustand";
 import { axiosInstance } from "../libs/axios.js";
 import toast from "react-hot-toast";
 
-
 export const useUserStore = create((set, get) => ({
   users: [],
   user: null,
@@ -45,27 +44,46 @@ export const useUserStore = create((set, get) => ({
     }
   },
 
-  // ✅ ดึงสถานะวิดีโอ
-fetchUserStatus: async (userId, courseId) => {
-  try {
-    const res = await axiosInstance.get(`/users/status/${userId}`);
-    const data = res.data;
+  // ✅ อัปเดตโปรไฟล์
+  updateProfile: async (data) => {
+    try {
+      const res = await axiosInstance.put("/users/update-profile", data);
+      set({ user: res.data }); // อัปเดตข้อมูลผู้ใช้ใน store
+      toast.success("Profile updated successfully");
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      toast.error("Error updating profile");
+    }
+  },
+
+  // ✅ ดึงสถานะวิดีโอและควิซ
+  fetchUserStatus: async (userId, courseId) => {
+    try {
+      const res = await axiosInstance.get(`/users/status/${userId}`);
+      const data = res.data;
 
     const completedVideosResponse = data.completedVideos || [];
 
-    // กรองวิดีโอที่เกี่ยวข้องกับคอร์สปัจจุบัน
-    const currentCourseVideos = completedVideosResponse.filter(item => item.courseId === courseId);
+      const currentCourseVideos = completedVideosResponse.filter(
+        (item) => item.courseId === courseId
+      );
+      const currentCourseQuizzes = completedQuizzesResponse.filter(
+        (item) => item.courseId === courseId
+      );
 
-    // เก็บผลลัพธ์ใน state
-    set({
-      completedVideos: new Set(currentCourseVideos.map(item => item.videoId)), // ใช้ videoId เก็บใน Set
-    });
-  } catch (error) {
-    console.error("Error fetching user status:", error);
-    toast.error("Error fetching user status");
-  }
-},
-  
+      set({
+        completedVideos: new Set(
+          currentCourseVideos.map((item) => item.videoId)
+        ),
+        completedQuizzes: new Set(
+          currentCourseQuizzes.map((item) => item.quizId)
+        ),
+      });
+    } catch (error) {
+      console.error("Error fetching user status:", error);
+      toast.error("Error fetching user status");
+    }
+  },
 
   // ✅ อัปเดตสถานะวิดีโอ
   updateVideoStatus: async (userId, videoId, courseId) => {
@@ -80,7 +98,7 @@ fetchUserStatus: async (userId, courseId) => {
         set({
           completedVideos: new Set([...completedVideos, videoId]),
         });
-        toast('Congratulations!', { icon: '🥳'})
+        toast("Congratulations!", { icon: "🥳" });
         get().startParty(); // ✅ เรียก startParty()
         setTimeout(() => get().stopParty(), 6000); // ✅ ปิด effect หลัง 6 วินาที
       } else {
@@ -91,7 +109,30 @@ fetchUserStatus: async (userId, courseId) => {
       toast.error("Error updating video status");
     }
   },
-  
+
+  // ✅ อัปเดตสถานะควิซ
+  updateQuizStatus: async (userId, quizId, courseId) => {
+    try {
+      const { completedQuizzes } = get();
+      if (!completedQuizzes.has(quizId)) {
+        // เปลี่ยนชื่อ & เช็ก quizId เดียว
+        await axiosInstance.post("/users/update-quiz-status", {
+          userId,
+          quizIds: [quizId], // Array ถูกต้อง
+          courseId,
+        });
+        set({
+          completedQuizzes: new Set([...completedQuizzes, quizId]),
+        });
+        toast("Congratulations!", { icon: "🥳" });
+        get().startParty(); // ✅ เรียก startParty()
+        setTimeout(() => get().stopParty(), 6000); // ✅ ปิด effect หลัง 6 วินาที
+      }
+    } catch (error) {
+      console.error("Error updating quiz status:", error);
+      toast.error("Error updating quiz status");
+    }
+  },
 
   // ✅ ดึงสถานะการเรียนของผู้ใช้
   getUserStatus: async (userId) => {
@@ -104,8 +145,8 @@ fetchUserStatus: async (userId, courseId) => {
       return null;
     }
   },
-  
-   // ฟังก์ชันใหม่ดึงข้อมูลคอร์สและสถานะการเรียน
+
+  // ฟังก์ชันใหม่ดึงข้อมูลคอร์สและสถานะการเรียน
   fetchCourseStatus: async (enrollmentId, userId) => {
     try {
       const res = await axiosInstance.get(`/users/status/${userId}`);
@@ -113,13 +154,21 @@ fetchUserStatus: async (userId, courseId) => {
 
       const completedVideosResponse = data.completedVideos || [];
       const completedQuizzesResponse = data.completedQuizzes || [];
-  
-      const currentCourseVideos = completedVideosResponse.filter(item => item.courseId === enrollmentId);
-      const currentCourseQuizzes = completedQuizzesResponse.filter(item => item.courseId === enrollmentId);
-  
+
+      const currentCourseVideos = completedVideosResponse.filter(
+        (item) => item.courseId === enrollmentId
+      );
+      const currentCourseQuizzes = completedQuizzesResponse.filter(
+        (item) => item.courseId === enrollmentId
+      );
+
       set({
-        completedVideos: new Set(currentCourseVideos.map(item => item.videoId)),
-        completedQuizzes: new Set(currentCourseQuizzes.map(item => item.quizId)),
+        completedVideos: new Set(
+          currentCourseVideos.map((item) => item.videoId)
+        ),
+        completedQuizzes: new Set(
+          currentCourseQuizzes.map((item) => item.quizId)
+        ),
       });
     } catch (error) {
       console.error("Error fetching course status:", error);
@@ -127,7 +176,6 @@ fetchUserStatus: async (userId, courseId) => {
     }
   },
 
-// ฟังก์ชันสำหรับบันทึกผลลัพธ์ควิซ
 // ฟังก์ชันสำหรับบันทึกผลลัพธ์ควิซ
 saveQuizResult: async (userId, courseId, quizId, answers, totalQuestions, score) => {
   const state = get(); // ดึงค่าปัจจุบันของ state

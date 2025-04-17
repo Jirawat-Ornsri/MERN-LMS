@@ -1,6 +1,7 @@
 import User from "../models/user.model.js";
 import Course from "../models/course.model.js";
 import mongoose from "mongoose";
+import cloudinary from "../lib/cloudinary.js";
 
 // ดึงข้อมูลผู้ใช้ทั้งหมด
 export const getAllUsers = async (req, res) => {
@@ -38,6 +39,40 @@ export const getSingleUser = async (req, res) => {
   } catch (error) {
     console.error("Error fetching user:", error);
     res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+export const updateProfile = async (req, res) => {
+  try {
+    const { profilePic, fullName, interests } = req.body;
+    const userId = req.user._id;
+
+    const updateFields = {};
+
+    
+    if (profilePic) {
+      const uploadResponse = await cloudinary.uploader.upload(profilePic);
+      updateFields.profilePic = uploadResponse.secure_url;
+    }
+    
+    if (fullName) {
+      updateFields.fullName = fullName;
+    }
+
+    if (interests) {
+      updateFields.interests = interests;
+    }
+
+    if (Object.keys(updateFields).length === 0) {
+      return res.status(400).json({ message: "No fields to update" });
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(userId, updateFields, { new: true });
+
+    res.status(200).json(updatedUser);
+  } catch (error) {
+    console.log("Error in updateProfile:", error);
+    res.status(500).json({ message: "Internal server error" });
   }
 };
 
