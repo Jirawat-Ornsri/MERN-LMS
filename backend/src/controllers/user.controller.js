@@ -1,5 +1,6 @@
 import User from "../models/user.model.js";
 import Course from "../models/course.model.js";
+import mongoose from "mongoose";
 import cloudinary from "../lib/cloudinary.js";
 
 // ดึงข้อมูลผู้ใช้ทั้งหมด
@@ -165,3 +166,161 @@ export const getUserStatus = async (req, res) => {
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
+
+// บันทึกผลการทำแบบฝึกหัด
+export const saveQuizResult = async (req, res) => {
+  try {
+    const { userId, quizId, courseId, answers, totalQuestions, score } = req.body;
+
+    // ค้นหาผู้ใช้
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).json({ message: "User not found" });
+    
+    // คำนวณจำนวนคำตอบที่ถูกต้อง
+    const correctAnswers = answers.filter(answer => answer.isCorrect).length;
+
+    // บันทึกข้อมูลผลการทำแบบฝึกหัด
+    const quizResult = {
+      course_id: courseId,
+      quiz_id: quizId,
+      correctAnswers: correctAnswers,
+      totalQuestions: totalQuestions,
+      score: score,
+      answers: answers.map(answer => answer.answer),  // เก็บคำตอบที่เลือกโดยผู้ใช้
+    };
+
+    // เพิ่มข้อมูลผลการทำแบบฝึกหัด
+    user.completedQuizzes.push(quizResult);
+
+    await user.save();
+    res.status(200).json({ message: "Quiz result saved successfully", quizResult });
+  } catch (error) {
+    console.error("Error saving quiz result:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+
+// แสดงผลการทำแบบฝึกหัด
+export const showQuizResult = async (req, res) => {
+  try {
+    const { userId, quizId, courseId } = req.params;
+
+    // ค้นหาผู้ใช้จาก ID
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    // ค้นหาผลการทำแบบฝึกหัดที่ตรงกับ quizId และ courseId
+    const quizResult = user.completedQuizzes.find(
+      (quiz) => quiz.quiz_id === quizId && quiz.course_id.toString() === courseId
+    );
+
+    if (!quizResult) return res.status(404).json({ message: "Quiz result not found" });
+
+    res.status(200).json({ quizResult });
+  } catch (error) {
+    console.error("Error showing quiz result:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+// Save continue watching data
+export const saveContinueWatching = async (req, res) => {
+  try {
+    const { userId, courseId, videoId, lastWatchedTime } = req.body;
+
+    if (!userId || !courseId || !videoId || lastWatchedTime == null) {
+      return res.status(400).json({ message: "Missing required fields" });
+    }
+
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    if (!user.continueWatching) user.continueWatching = [];
+
+    const index = user.continueWatching.findIndex(
+      (item) =>
+        item.course_id.toString() === courseId &&
+        item.video_id === videoId
+    );
+
+    if (index !== -1) {
+      return res.status(400).json({ message: "Video already saved in continue watching" });
+    }
+
+    const courseObjectId = new mongoose.Types.ObjectId(courseId);
+
+    user.continueWatching.push({
+      course_id: courseObjectId,
+      video_id: videoId,
+      lastWatchedTime,
+    });
+
+    await user.save();
+    res.status(200).json({ message: "Continue watching saved", continueWatching: user.continueWatching });
+  } catch (error) {
+    console.error("Error in saveContinueWatching:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+export const updateContinueWatching = async (req, res) => {
+  try {
+    const { userId, courseId } = req.params;
+    const { videoId, lastWatchedTime } = req.body;
+
+    if (!userId || !courseId || !videoId || lastWatchedTime == null) {
+      return res.status(400).json({ message: "Missing required fields" });
+    }
+
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    if (!user.continueWatching) user.continueWatching = [];
+
+    const index = user.continueWatching.findIndex(
+      (item) =>
+        String(item.course_id) === String(courseId) &&
+        String(item.video_id) === String(videoId) // ✅ เปรียบเทียบเป็น String
+    );
+
+    if (index !== -1) {
+      // ✅ อัปเดตค่าเดิม
+      user.continueWatching[index].lastWatchedTime = lastWatchedTime;
+      user.continueWatching[index].updatedAt = Date.now();
+    } else {
+      // ✅ เพิ่มใหม่ ถ้ายังไม่มี
+      user.continueWatching.push({
+        course_id: new mongoose.Types.ObjectId(courseId),
+        video_id: String(videoId), // ✅ เก็บเป็น String เพื่อความเสถียร
+        lastWatchedTime,
+      });
+    }
+
+    await user.save();
+    res.status(200).json({ message: "Continue watching updated", continueWatching: user.continueWatching });
+  } catch (error) {
+    console.error("Error in updateContinueWatching:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+
+// Get continue watching data
+export const getContinueWatching = async (req, res) => {
+  try {
+    const { userId, courseId } = req.params;
+
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    const watchingData = user.continueWatching.filter(
+      (item) => item.course_id.toString() === courseId
+    );
+
+    res.status(200).json({ continueWatching: watchingData });
+  } catch (error) {
+    console.error("Error in getContinueWatching:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
