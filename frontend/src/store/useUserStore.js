@@ -62,8 +62,7 @@ export const useUserStore = create((set, get) => ({
       const res = await axiosInstance.get(`/users/status/${userId}`);
       const data = res.data;
 
-      const completedVideosResponse = data.completedVideos || [];
-      const completedQuizzesResponse = data.completedQuizzes || [];
+    const completedVideosResponse = data.completedVideos || [];
 
       const currentCourseVideos = completedVideosResponse.filter(
         (item) => item.courseId === courseId
@@ -176,4 +175,141 @@ export const useUserStore = create((set, get) => ({
       toast.error("Error fetching course status");
     }
   },
+
+// ฟังก์ชันสำหรับบันทึกผลลัพธ์ควิซ
+saveQuizResult: async (userId, courseId, quizId, answers, totalQuestions, score) => {
+  const state = get(); // ดึงค่าปัจจุบันของ state
+  const completedQuizzes = state.completedQuizzes;
+
+  // ตรวจสอบว่าควิซนี้ถูกบันทึกไปแล้วหรือยัง
+  if (completedQuizzes.has(quizId)) {
+    console.log("Quiz already completed and saved.");
+    return; // ไม่บันทึกซ้ำ
+  }
+
+  try {
+    // ส่งข้อมูลไปยัง API
+    await axiosInstance.post("http://localhost:5001/api/users/save-quiz-result", {
+      userId,
+      courseId,
+      quizId,
+      answers: answers.map((q) => ({
+        questionId: q.questionId,
+        answer: q.selectedAnswer,
+        isCorrect: q.isCorrect,
+      })),
+      totalQuestions,
+      score,
+    });
+
+    // อัปเดต completedQuizzes โดยใช้ set() ของ Zustand
+    set({
+      completedQuizzes: new Set([...completedQuizzes, quizId]), // เพิ่ม quizId ลงใน completedQuizzes
+    });
+
+    // แสดงผล toast และเริ่ม party effect เพียงครั้งเดียว
+    if (!state.isPartyActive) {  // ใช้สถานะ isPartyActive เพื่อตรวจสอบว่า party effect ยังไม่ได้เริ่ม
+      toast.success("Quiz result saved successfully!");
+      toast('Congratulations!', { icon: '🥳' });
+      state.startParty(); // เรียกใช้งานฟังก์ชันที่เกี่ยวข้องใน state
+      setTimeout(() => state.stopParty(), 6000); // หยุด party effect หลังจาก 6 วินาที
+    }
+  } catch (error) {
+    toast.error("Error saving quiz result");
+    console.error("Error saving quiz result:", error);
+  }
+},
+
+// ฟังก์ชันใหม่ดึงข้อมูลผลลัพธ์ของ Quiz จาก API
+getQuizResult: async (userId, quizId, courseId) => {
+  try {
+    const res = await axiosInstance.get(`/users/show-quiz-result/${userId}/${quizId}/${courseId}`);
+    return res.data; // ส่งกลับผลลัพธ์ของ quiz
+  } catch (error) {
+    if (error.response && error.response.status === 404) {
+      // ถ้าได้รับ 404 แสดงว่าไม่มีข้อมูลในฐานข้อมูล จึงไม่จำเป็นต้องแสดง popup
+    } else {
+      // ถ้าเกิดข้อผิดพลาดอื่นๆ ให้แสดงข้อความแจ้งเตือน
+      toast.error("Error fetching quiz result");
+    }
+    return null;
+  }
+},
+
+
+// ฟังก์ชัน continueWatching
+continueWatching: async (userId, courseId, videoId, currentTime) => {
+  try {
+    videoId = String(videoId); // ✅ แปลงเป็น String
+
+    // ดึงข้อมูลเดิม
+    const existingData = await axiosInstance.get(`/users/continue-watching/${userId}/${courseId}`);
+    const existingVideos = existingData.data?.continueWatching || [];
+
+    const existingVideo = existingVideos.find(item => 
+      String(item.video_id) === videoId && String(item.course_id) === String(courseId)
+    );
+
+    if (existingVideo) {
+      if (existingVideo.lastWatchedTime !== currentTime) {
+        console.log("Updating video data...");
+
+        await axiosInstance.put(`/users/continue-watching/${userId}/${courseId}`, {
+          userId,
+          courseId,
+          videoId,
+          lastWatchedTime: currentTime
+        });
+
+        set({
+          continueWatchingData: existingVideos.map(item => 
+            item.video_id === videoId ? { ...item, lastWatchedTime: currentTime } : item
+          ),
+        });
+
+      } else {
+        console.log("No changes in lastWatchedTime, skipping update.");
+      }
+    } else {
+      if (currentTime > 0) {
+        console.log("Saving new video data...");
+
+        await axiosInstance.post(`/users/continue-watching`, {
+          userId,
+          courseId,
+          videoId,
+          lastWatchedTime: currentTime
+        });
+
+        set({
+          continueWatchingData: [...existingVideos, {
+            video_id: videoId,
+            course_id: courseId,
+            lastWatchedTime: currentTime
+          }],
+        });
+      }
+    }
+
+  } catch (error) {
+    console.error("❌ Error updating continue watching data:", error);
+    toast.error("Error updating continue watching data");
+  }
+},
+
+
+// ดึงข้อมูล Video ที่ดูล่าสุด
+getContinueWatching: async (userId, courseId) => {
+  try {
+    const res = await axiosInstance.get(`/users/continue-watching/${userId}/${courseId}`);
+    return res.data; // { videoId, lastWatchedTime }
+  } catch (error) {
+    console.error("Error fetching continue watching data:", error);
+    return null;
+  }
+},
+
+
+
 }));
+

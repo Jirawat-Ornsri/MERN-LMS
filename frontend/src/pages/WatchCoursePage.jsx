@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { useEnrollStore } from "../store/useEnrollStore";
 import { useAuthStore } from "../store/useAuthStore";
@@ -19,77 +19,180 @@ const WatchCoursePage = () => {
   const [completedVideos, setCompletedVideos] = useState(new Set());
   const [completedQuizzes, setCompletedQuizzes] = useState(new Set());
   const { authUser } = useAuthStore();
-  const { getUserStatus, updateVideoStatus, updateQuizStatus } = useUserStore();
+  const {
+    getUserStatus,
+    updateVideoStatus,
+    getQuizResult,
+    saveQuizResult,
+    getContinueWatching,
+    continueWatching,
+  } = useUserStore();
   const isPartyActive = useUserStore((state) => state.isPartyActive);
+  const hasSavedResult = useRef(false);
+  const [lastWatchedTime, setLastWatchedTime] = useState(0);
+  const shouldSetTime = useRef(false);
+  const videoRef = useRef(null); // ✅ อยู่ก่อน useEffect ที่ใช้มัน
 
   useEffect(() => {
     const fetchEnrollment = async () => {
-      if (authUser?._id && enrollments.length === 0) {
-        await getEnrollments(authUser._id);
-      }
+      if (!authUser?._id || isFetching || course) return;
+      await getEnrollments(authUser._id);
       const enrollment = enrollments.find((e) => e._id === enrollment_id);
       if (enrollment) {
         setCourse(enrollment);
-        if (enrollment.course_id?.lessons[0]?.videos) {
-          setSelectedVideo(enrollment.course_id.lessons[0].videos[0]);
-        }
       }
     };
-    if (!isFetching && !course && authUser?._id) {
-      fetchEnrollment();
+    fetchEnrollment();
+  }, [authUser, enrollment_id, enrollments, isFetching, course]);
+  
+  useEffect(() => {
+    const fetchContinueWatching = async () => {
+      if (!course || !authUser?._id) return;
+    
+      const continueData = await getContinueWatching(
+        authUser._id,
+        course.course_id._id
+      );
+      const allVideos = course.course_id.lessons.flatMap(
+        (lesson) => lesson.videos
+      );
+    
+      // 🔧 หาตัวที่ตรงกับ course_id ปัจจุบัน
+      const entry = continueData.continueWatching?.find(
+        (item) => String(item.course_id) === String(course.course_id._id)
+      );
+    
+      const lastVideo = allVideos.find(
+        (v) => String(v.video_id) === String(entry?.video_id)
+      );
+    
+      if (lastVideo) {
+        setLastWatchedTime(entry.lastWatchedTime || 0);
+        shouldSetTime.current = true;
+        setSelectedVideo(lastVideo);
+      } else {
+        setLastWatchedTime(0);
+        shouldSetTime.current = false;
+        setSelectedVideo(course.course_id.lessons[0]?.videos[0]);
+      }
+    };
+    
+  
+    fetchContinueWatching();
+  }, [course, authUser]);
+  
+  useEffect(() => {
+    const fetchUserStatusAndQuiz = async () => {
+      if (!authUser?._id || !course) return;
+      const data = await getUserStatus(authUser._id);
+      if (data) {
+        const completedVideosSet = new Set();
+        data.completedVideos.forEach((item) => {
+          if (String(item.courseId) === String(course.course_id._id)) {
+            completedVideosSet.add(String(item.videoId));
+          }
+        });
+        setCompletedVideos(completedVideosSet);
+  
+        const completedQuizResults = new Set();
+        for (let lesson of course.course_id.lessons) {
+          if (lesson.quiz) {
+            const quizResult = await getQuizResult(
+              authUser._id,
+              lesson.quiz.quiz_id,
+              course.course_id._id
+            );
+            if (quizResult && quizResult.quizResult) {
+              completedQuizResults.add(lesson.quiz.quiz_id);
+              if (!result && !completedQuizzes.has(lesson.quiz.quiz_id)) {
+                setResult({
+                  score: quizResult.quizResult.score,
+                  total: quizResult.quizResult.totalQuestions,
+                  details: quizResult.quizResult.answers,
+                });
+              }
+            }
+          }
+        }
+        setCompletedQuizzes(completedQuizResults);
+      }
+    };
+  
+    fetchUserStatusAndQuiz();
+  }, [authUser, course, result, completedQuizzes]);
+  
+  useEffect(() => {
+    if (selectedVideo && lastWatchedTime > 0) {
+      shouldSetTime.current = true;
     }
-  }, [
-    enrollment_id,
-    enrollments,
-    getEnrollments,
-    authUser,
-    isFetching,
-    course,
-  ]);
+  }, [selectedVideo, lastWatchedTime]); // ขึ้นกับ selectedVideo และ lastWatchedTime
 
   useEffect(() => {
-    const fetchUserStatus = async () => {
-      if (authUser?._id && enrollment_id && course) {
-        const data = await getUserStatus(authUser._id);
-        if (data) {
-          const currentCourseVideos = data.completedVideos.filter(
-            (item) => item.courseId === course.course_id._id
-          );
-          const currentCourseQuizzes = data.completedQuizzes.filter(
-            (item) => item.courseId === course.course_id._id
-          );
-          setCompletedVideos(
-            new Set(currentCourseVideos.map((item) => item.videoId))
-          );
-          setCompletedQuizzes(
-            new Set(currentCourseQuizzes.map((item) => item.quizId))
+    const interval = setInterval(() => {
+      if (videoRef.current && authUser && course && selectedVideo) {
+        const currentTime = videoRef.current.currentTime;
+
+        if (currentTime > 0) {
+          continueWatching(
+            authUser._id,
+            course.course_id._id,
+            selectedVideo.video_id,
+            currentTime
           );
         }
       }
-    };
-    fetchUserStatus();
-  }, [authUser, enrollment_id, course]);
+    }, 5000); // บันทึกทุก 5 วินาที
 
-  const handleVideoSelect = (video) => {
+    return () => clearInterval(interval); // ล้าง interval เมื่อคอมโพเนนต์ถูกทำลาย
+  }, [selectedVideo, authUser, course]);
+
+  const handleVideoSelect = async (video) => {
+    shouldSetTime.current = true; // Set to true when selecting a new video
     setSelectedVideo(video);
-  };
 
-  const handleQuizSelect = (quiz) => {
-    setSelectedQuiz(quiz);
-    setAnswers({});
-    setResult(null);
+    const continueData = await getContinueWatching(authUser._id, course.course_id._id);
+    const videoData = continueData?.continueWatching?.find(
+      (entry) =>
+        String(entry.video_id) === String(video.video_id) &&
+        String(entry.course_id) === String(course.course_id._id)
+    );
+    if (videoData) {
+      if (videoData.video_id !== selectedVideo?.video_id) {
+        setLastWatchedTime(videoData.lastWatchedTime); // Set lastWatchedTime
+      }
+    } else {
+      setLastWatchedTime(0);
+    }
   };
 
   const handleAnswerChange = (questionId, selectedOption) => {
     setAnswers((prev) => ({ ...prev, [questionId]: selectedOption }));
   };
 
+  const handleQuizSelect = async (quiz) => {
+    if (!quiz) return;
+    setSelectedQuiz(quiz);
+
+    try {
+      if (completedQuizzes.has(quiz.quiz_id)) return;
+      const response = await getQuizResult(
+        authUser._id,
+        quiz.quiz_id,
+        course.course_id._id
+      );
+      if (response?.quizResult) {
+        setResult({
+          score: response.quizResult.score,
+          total: response.quizResult.totalQuestions,
+          details: response.quizResult.answers,
+        });
+      }
+    } catch (error) {}
+  };
+
   const handleSubmitQuiz = async () => {
-    const unanswered = selectedQuiz.questions.some(
-      (q) => !answers[q.question_id]
-    );
-    if (unanswered) {
-      toast("Please answer all questions before submitting your answer!", {
+    if (selectedQuiz.questions.some((q) => !answers[q.question_id])) {
+      toast("Please answer all questions before submitting!", {
         icon: "⚠️",
       });
       return;
@@ -99,7 +202,11 @@ const WatchCoursePage = () => {
     const results = selectedQuiz.questions.map((q) => {
       const isCorrect = answers[q.question_id] === q.answer;
       if (isCorrect) correctCount++;
-      return { ...q, selectedAnswer: answers[q.question_id], isCorrect };
+      return {
+        ...q,
+        selectedAnswer: answers[q.question_id],
+        isCorrect,
+      };
     });
 
     setResult({
@@ -107,53 +214,32 @@ const WatchCoursePage = () => {
       total: selectedQuiz.questions.length,
       details: results,
     });
-
-    if (!completedQuizzes.has(selectedQuiz.quiz_id)) {
-      try {
-        await updateQuizStatus(
-          authUser._id, // userId
-          selectedQuiz.quiz_id, // quizId
-          course.course_id._id // courseId
-        );
-
-        setCompletedQuizzes((prev) => new Set([...prev, selectedQuiz.quiz_id]));
-
-        const data = await getUserStatus(authUser._id);
-        if (data) {
-          const currentCourseQuizzes = data.completedQuizzes.filter(
-            (item) => item.courseId === course.course_id._id
-          );
-          setCompletedQuizzes(
-            new Set(currentCourseQuizzes.map((item) => item.quizId))
-          );
-        }
-      } catch (error) {
-        console.error("Error updating quiz status:", error);
-        toast.error("Error updating quiz status");
-      }
-    } else {
-      console.log("Quiz already completed, no update needed.");
-    }
   };
+
+  useEffect(() => {
+    if (!selectedQuiz || !result?.details || hasSavedResult.current) return;
+    if (completedQuizzes.has(selectedQuiz.quiz_id)) return;
+
+    saveQuizResult(
+      authUser._id,
+      course.course_id._id,
+      selectedQuiz.quiz_id,
+      result.details,
+      selectedQuiz.questions?.length || 0,
+      result.score
+    );
+    hasSavedResult.current = true;
+  }, [result, selectedQuiz, completedQuizzes]);
 
   const handleVideoComplete = async (video) => {
     if (!completedVideos.has(video.video_id)) {
       try {
         await updateVideoStatus(
-          authUser._id, // userId
-          video.video_id, // videoId
-          course.course_id._id // courseId
+          authUser._id,
+          video.video_id,
+          course.course_id._id
         );
-        setCompletedVideos((prev) => new Set([...prev, video.video_id]));
-        const data = await getUserStatus(authUser._id);
-        if (data) {
-          const currentCourseVideos = data.completedVideos.filter(
-            (item) => item.courseId === course.course_id._id
-          );
-          setCompletedVideos(
-            new Set(currentCourseVideos.map((item) => item.videoId))
-          );
-        }
+        setCompletedVideos((prev) => new Set(prev.add(video.video_id)));
       } catch (error) {
         console.error("Error updating video status:", error);
         toast.error("Error updating video status");
@@ -161,6 +247,19 @@ const WatchCoursePage = () => {
     }
   };
 
+  useEffect(() => {
+    const video = videoRef.current;
+  
+    if (
+      video &&
+      shouldSetTime.current &&
+      lastWatchedTime > 0 &&
+      video.readyState >= 1 // video loaded metadata แล้ว
+    ) {
+      video.currentTime = lastWatchedTime;
+      shouldSetTime.current = false;
+    }
+  }, [selectedVideo, lastWatchedTime]);
   const handleDownloadVideo = (videoUrl, videoTitle) => {
     try {
       // สร้าง anchor tag สำหรับดาวน์โหลด
@@ -204,12 +303,19 @@ const WatchCoursePage = () => {
           {selectedVideo ? (
             <div>
               <video
+                ref={videoRef}
                 key={selectedVideo.video_id}
                 width="100%"
                 height="auto"
                 controls
                 className="rounded-lg shadow-lg"
                 onEnded={() => handleVideoComplete(selectedVideo)}
+                onLoadedMetadata={() => {
+                  if (shouldSetTime.current && lastWatchedTime > 0) {
+                    videoRef.current.currentTime = lastWatchedTime;
+                    shouldSetTime.current = false;
+                  }
+                }}
               >
                 <source src={selectedVideo.url} />
                 ขอโทษ, เบราว์เซอร์ของคุณไม่รองรับการเล่นวิดีโอนี้.
@@ -221,7 +327,6 @@ const WatchCoursePage = () => {
         </div>
       </div>
 
-      {/* --- side bar --- */}
       <div className="p-4 rounded-lg shadow-2xl bg-base-300 text-base-content">
         <h1 className="text-2xl font-bold mb-6">{course.course_id?.title}</h1>
         <div className="space-y-4">
@@ -240,7 +345,7 @@ const WatchCoursePage = () => {
                 >
                   <div className="flex items-center justify-between">
                     <p>
-                      {completedVideos.has(String(video.video_id)) && "✅"} 🎬{" "}
+                      {completedVideos.has(String(video.video_id)) ? "✅" : ""} 🎬{" "}
                       {video.title}
                     </p>
                     {selectedVideo?.video_id === video.video_id && (
@@ -260,8 +365,8 @@ const WatchCoursePage = () => {
                   onClick={() => handleQuizSelect(lesson.quiz)}
                 >
                   <p>
-                    {completedQuizzes.has(String(lesson.quiz.quiz_id)) && "✅"}{" "}
-                    📝 {lesson.quiz.title}
+                  {completedQuizzes.has(lesson.quiz.quiz_id) ? "✅" : ""} 📝{" "}
+                  {lesson.quiz.title}
                   </p>
                 </div>
               )}
@@ -270,7 +375,6 @@ const WatchCoursePage = () => {
         </div>
       </div>
 
-      {/* ----- quiz modal ---- */}
       {selectedQuiz && (
         <QuizModal
           selectedQuiz={selectedQuiz}
