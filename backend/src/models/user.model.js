@@ -16,7 +16,19 @@ const userSchema = new mongoose.Schema(
     completedQuizzes: [
       {
         course_id: { type: mongoose.Schema.Types.ObjectId, ref: "Course" },
-        quiz_id: { type: String }
+        quiz_id: { type: String },
+        correctAnswers: { type: Number }, // จำนวนคำตอบที่ถูกต้อง
+        totalQuestions: { type: Number }, // จำนวนคำถามทั้งหมด
+        score: { type: Number }, // คะแนนที่ได้
+        answers: [{ type: String }], // คำตอบที่เลือกโดยผู้ใช้
+      }
+    ],
+    continueWatching: [
+      {
+        course_id: { type: mongoose.Schema.Types.ObjectId, ref: "Course" },
+        video_id: { type: String },
+        lastWatchedTime: { type: Number }, // วินาทีที่หยุดดู
+        updatedAt: { type: Date, default: Date.now }
       }
     ]
   },
