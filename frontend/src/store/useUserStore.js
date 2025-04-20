@@ -189,7 +189,7 @@ saveQuizResult: async (userId, courseId, quizId, answers, totalQuestions, score)
 
   try {
     // ส่งข้อมูลไปยัง API
-    await axiosInstance.post("http://localhost:5001/api/users/save-quiz-result", {
+    await axiosInstance.post("/users/save-quiz-result", {
       userId,
       courseId,
       quizId,
