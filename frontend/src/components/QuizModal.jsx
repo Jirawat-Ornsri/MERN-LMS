@@ -11,7 +11,6 @@ const QuizModal = ({
   if (!selectedQuiz) return null;
 
   const isCompleted = result && result.details && result.details.length > 0;
-
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center p-4">
       <div className="bg-base-300 p-6 rounded-lg w-full max-w-2xl md:w-3/4 lg:w-1/2">
